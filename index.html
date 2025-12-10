@@ -5,14 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>T-PAD</title>
   
-  <!-- PWA Manifest (Embedded) -->
-  <link rel="manifest" href='data:application/manifest+json;base64,ewogICJuYW1lIjogIlQtUEFEIiwKICAic2hvcnRfbmFtZSI6ICJULTIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImh0dHBzOi8vcGxhY2Vob2xkLmNvLzE5MngxOTIvM2I4MmY2L2ZmZmZmLnBuZz90ZXh0PVQiLAogICAgInNpemVzIjogIjE5MngxOTIiLAogICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogIH1dCn0=' />
+  <!-- Icon Data (Embedded SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
+  
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%230f172a'%3E%3Crect width='512' height='512' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
+
+  <!-- PWA Manifest (Embedded with Icon) -->
+  <link rel="manifest" href='data:application/manifest+json;base64,ewogICJuYW1lIjogIlQtUEFEIiwKICAic2hvcnRfbmFtZSI6ICJULTIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCxiYXNlNjQsaPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48cmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgcng9JzEwMCcgZmlsbD0nIzBmMTcyYScvPjxwYXRoIGQ9J005NiAyNTZoMzIwJyBzdHJva2U9JyMzMzQxNTUnIHN0cm9rZS13aWR0aD0nMTYnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjxwYXRoIGQ9J00xNDAgMjU2di00MG00MCA4MHYtMTIwbTQwIDgwdi02MG00MCAxNDB2LTE4MG00MCAxMjB2LTUwbTQwIDgwdi0xMDBtNDAgNDB2LTIwJyBzdHJva2U9JyMzYjgyZjYnIHN0cm9rZS13aWR0aD0nMzInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjx0ZXh0IHg9JzI1NicgeT0nNDMwJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxMDAnIGZvbnQtd2VpZ2h0PSdib2xkJyBmaWxsPSd3aGl0ZScgdGV4dC1hbmNob3I9J21pZGRsZScgbGV0dGVyLXNwYWNpbmc9JzQnPlQtUEFEPC90ZXh0Pjwvc3ZnPg==”,CiAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogIH1dCn0=' />
   
   <!-- iOS Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="T-PAD">
-  <link rel="apple-touch-icon" href="https://placehold.co/180x180/3b82f6/ffffff.png?text=T">
 
   <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -45,7 +49,7 @@
     
     /* Improved Slider for Touch */
     input[type=range] {
-      touch-action: none;
+      touch-action: none; /* Prevent scrolling while dragging slider */
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -94,7 +98,6 @@
         self.addEventListener('install', (event) => {
           event.waitUntil(
             caches.open(CACHE_NAME).then((cache) => {
-              // Try to cache, but don't fail if some fail (best effort)
               return Promise.all(
                 URLS_TO_CACHE.map(url => {
                   return fetch(url).then(res => {
@@ -337,7 +340,6 @@
          if (updated) setPads(newPads);
       };
 
-      // Updated stopPad with stopMode Logic
       const stopPad = useCallback((padId, mode = 'CUT', duration = 0) => {
         const nodes = activeAudioNodes.current[padId];
         if (!nodes || !audioCtx) return;
@@ -1548,6 +1550,9 @@
                        </div>
                      </div>
                     <input type="range" min="0" max="4.0" step="0.1" value={pad.settings.volume} onChange={(e) => onUpdate({ volume: parseFloat(e.target.value) })} className="w-full accent-yellow-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                  </div>
+                  <div className="pt-4 border-t border-slate-600/50 text-right">
+                    <button onClick={() => { if(confirm("設定を初期状態に戻しますか？")) { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false }); } }} className="text-xs text-slate-400 hover:text-white underline">設定を初期化</button>
                   </div>
                 </div>
               </div>
