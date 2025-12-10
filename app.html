@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>T-PAD</title>
+  
+  <!-- Icon Data (Embedded SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
+  
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%230f172a'%3E%3Crect width='512' height='512' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
+
+  <!-- PWA Manifest (Embedded with Icon) -->
+  <link rel="manifest" href='data:application/manifest+json;base64,ewogICJuYW1lIjogIlQtUEFEIiwKICAic2hvcnRfbmFtZSI6ICJULTIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCxiYXNlNjQsaPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48cmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgcng9JzEwMCcgZmlsbD0nIzBmMTcyYScvPjxwYXRoIGQ9J005NiAyNTZoMzIwJyBzdHJva2U9JyMzMzQxNTUnIHN0cm9rZS13aWR0aD0nMTYnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjxwYXRoIGQ9J00xNDAgMjU2di00MG00MCA4MHYtMTIwbTQwIDgwdi02MG00MCAxNDB2LTE4MG00MCAxMjB2LTUwbTQwIDgwdi0xMDBtNDAgNDB2LTIwJyBzdHJva2U9JyMzYjgyZjYnIHN0cm9rZS13aWR0aD0nMzInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjx0ZXh0IHg9JzI1NicgeT0nNDMwJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxMDAnIGZvbnQtd2VpZ2h0PSdib2xkJyBmaWxsPSd3aGl0ZScgdGV4dC1hbmNob3I9J21pZGRsZScgbGV0dGVyLXNwYWNpbmc9JzQnPlQtUEFEPC90ZXh0Pjwvc3ZnPg==”,CiAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogIH1dCn0=' />
+  
+  <!-- iOS Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="T-PAD">
+
+  <!-- Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/idb-keyval@6.2.0/dist/umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    body {
+      overscroll-behavior-y: contain;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      font-family: sans-serif;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Custom Animations */
+    @keyframes flash-red {
+      0%, 100% { box-shadow: inset 0 0 0 0px transparent; }
+      50% { box-shadow: inset 0 0 50px 10px rgba(239, 68, 68, 0.8); background-color: rgba(127, 29, 29, 0.5); }
+    }
+    .animate-flash {
+      animation: flash-red 0.5s infinite;
+    }
+    
+    /* Improved Slider for Touch */
+    input[type=range] {
+      touch-action: none; /* Prevent scrolling while dragging slider */
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      background: #ffffff;
+      border-radius: 50%;
+      margin-top: -10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: #475569;
+      border-radius: 2px;
+    }
+    
+    /* Number input styling */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+
+  <!-- Service Worker for Offline Support -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 't-pad-v2';
+        const URLS_TO_CACHE = [
+          './',
+          './index.html',
+          './app.html',
+          'https://cdn.tailwindcss.com',
+          'https://unpkg.com/react@18/umd/react.production.min.js',
+          'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+          'https://unpkg.com/@babel/standalone/babel.min.js',
+          'https://unpkg.com/idb-keyval@6.2.0/dist/umd.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
+        ];
+
+        self.addEventListener('install', (event) => {
+          event.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => {
+              return Promise.all(
+                URLS_TO_CACHE.map(url => {
+                  return fetch(url).then(res => {
+                    if(!res.ok) throw Error(res.statusText);
+                    return cache.put(url, res);
+                  }).catch(err => console.log('Cache fail:', url));
+                })
+              );
+            })
+          );
+        });
+
+        self.addEventListener('fetch', (event) => {
+          event.respondWith(
+            caches.match(event.request).then((response) => {
+              return response || fetch(event.request);
+            })
+          );
+        });
+      `;
+      
+      const blob = new Blob([swCode], {type: 'application/javascript'});
+      const swUrl = URL.createObjectURL(blob);
+      
+      navigator.serviceWorker.register(swUrl)
+        .then(reg => console.log('SW registered', reg))
+        .catch(err => console.log('SW failed', err));
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-white h-screen overflow-hidden">
+  <div id="root" class="h-full"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    // --- Icons ---
+    const Icon = ({ children, size = 24, className = "" }) => (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>);
+    const Music = (p) => <Icon {...p}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></Icon>;
+    const Settings = (p) => <Icon {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
+    const Upload = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></Icon>;
+    const X = (p) => <Icon {...p}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
+    const Volume2 = (p) => <Icon {...p}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></Icon>;
+    const Scissors = (p) => <Icon {...p}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></Icon>;
+    const Zap = (p) => <Icon {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>;
+    const Layers = (p) => <Icon {...p}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></Icon>;
+    const ZoomIn = (p) => <Icon {...p}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></Icon>;
+    const ZoomOut = (p) => <Icon {...p}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></Icon>;
+    const Maximize = (p) => <Icon {...p}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></Icon>;
+    const ArrowUpDown = (p) => <Icon {...p}><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></Icon>;
+    const ArrowLeftRight = (p) => <Icon {...p}><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></Icon>;
+    const Save = (p) => <Icon {...p}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></Icon>;
+    const FolderOpen = (p) => <Icon {...p}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></Icon>;
+    const Download = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>;
+    const Trash2 = (p) => <Icon {...p}><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></Icon>;
+    const Edit3 = (p) => <Icon {...p}><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></Icon>;
+    const Move = (p) => <Icon {...p}><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="19 9 22 12 19 15"></polyline><polyline points="9 19 12 22 15 19"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></Icon>;
+    const AlertTriangle = (p) => <Icon {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></Icon>;
+    const Clock = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></Icon>;
+    const Repeat = (p) => <Icon {...p}><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></Icon>;
+    const Grid = (p) => <Icon {...p}><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></Icon>;
+    const Play = (p) => <Icon {...p}><polygon points="5 3 19 12 5 21 5 3"></polygon></Icon>;
+    const Square = (p) => <Icon {...p}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></Icon>;
+    const RefreshCw = (p) => <Icon {...p}><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></Icon>;
+    const Timer = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></Icon>;
+    const PlayCircle = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></Icon>;
+    const StopCircle = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"></circle><rect x="9" y="9" width="6" height="6"></rect></Icon>;
+    const Repeat1 = (p) => <Icon {...p}><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></Icon>;
+    const Sliders = (p) => <Icon {...p}><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></Icon>;
+    const ArrowDown = (p) => <Icon {...p}><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></Icon>;
+    const BookOpen = (p) => <Icon {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></Icon>;
+
+    // --- Constants ---
+    const KEY_MAP = [
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'
+    ];
+    const COLORS = [
+      'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 'bg-lime-500', 
+      'bg-green-500', 'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500', 'bg-sky-500',
+      'bg-red-600', 'bg-orange-600', 'bg-amber-600', 'bg-yellow-600', 'bg-lime-600', 
+      'bg-green-600', 'bg-emerald-600', 'bg-teal-600', 'bg-cyan-600', 'bg-sky-600'
+    ];
+    const FADE_DURATIONS = [0.5, 1.0, 2.0, 3.0];
+
+    const generatePads = (count) => Array.from({ length: count }, (_, i) => ({
+      id: i, 
+      keyTrigger: KEY_MAP[i], 
+      name: `Pad ${i + 1}`, 
+      color: COLORS[i % COLORS.length],
+      buffer: null, blob: null, url: null, 
+      settings: { 
+        start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false,
+        enableTrigger: false, triggerTime: '' 
+      }
+    }));
+
+    const formatDuration = (seconds) => {
+      if (!seconds && seconds !== 0) return "--";
+      return seconds.toFixed(2) + "s";
+    };
+
+    function SoundBoardApp() {
+      const [audioCtx, setAudioCtx] = useState(null);
+      const [padCount, setPadCount] = useState(10); 
+      const [pads, setPads] = useState(generatePads(10));
+      const [playingPads, setPlayingPads] = useState({}); 
+      const [editingPadId, setEditingPadId] = useState(null);
+      const [isReady, setIsReady] = useState(false);
+      const [isLoadingData, setIsLoadingData] = useState(true);
+      const [isProcessing, setIsProcessing] = useState(false);
+      const [transitionMode, setTransitionMode] = useState('CUT');
+      const [crossfadeDuration, setCrossfadeDuration] = useState(1.0);
+      const [playbackMode, setPlaybackMode] = useState('SWITCH');
+      const [isEditMode, setIsEditMode] = useState(false);
+      const [swapSourceId, setSwapSourceId] = useState(null);
+      const [confirmDeleteId, setConfirmDeleteId] = useState(null); 
+      const [currentTimeStr, setCurrentTimeStr] = useState('');
+      const [startMode, setStartMode] = useState('CUT'); 
+      const [stopMode, setStopMode] = useState('CUT');   
+      const [globalFadeDuration, setGlobalFadeDuration] = useState(1.0); 
+      const [showManual, setShowManual] = useState(false);
+
+      const activeAudioNodes = useRef({});
+      const fileInputRefs = useRef([]);
+      const projectInputRef = useRef(null);
+      const padsRef = useRef(pads); 
+
+      useEffect(() => {
+        padsRef.current = pads;
+      }, [pads]);
+
+      // Clock & Timer Logic
+      useEffect(() => {
+        const interval = setInterval(() => {
+          const now = new Date();
+          const timeString = now.toLocaleTimeString('ja-JP', { 
+            timeZone: 'Asia/Tokyo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
+          setCurrentTimeStr(timeString);
+
+          if (isReady && audioCtx) {
+            padsRef.current.forEach(pad => {
+              if (pad.settings.enableTrigger && pad.settings.triggerTime) {
+                let triggerTarget = pad.settings.triggerTime;
+                if (triggerTarget.length === 5) triggerTarget += ":00"; 
+                if (triggerTarget === timeString) {
+                  triggerPadFromTimer(pad.id);
+                }
+              }
+            });
+          }
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [isReady, audioCtx]); 
+
+      const triggerPadRef = useRef(null);
+
+      useEffect(() => {
+        const loadPads = async () => {
+          try {
+            let hasData = false;
+            // Load Settings
+            const savedStartMode = await idbKeyval.get('startMode');
+            if (savedStartMode) setStartMode(savedStartMode);
+            const savedStopMode = await idbKeyval.get('stopMode');
+            if (savedStopMode) setStopMode(savedStopMode);
+            const savedDur = await idbKeyval.get('globalFadeDuration'); 
+            if (savedDur) setGlobalFadeDuration(savedDur);
+            const savedPlaybackMode = await idbKeyval.get('playbackMode');
+            if (savedPlaybackMode) setPlaybackMode(savedPlaybackMode);
+            
+            const savedPadCount = await idbKeyval.get('padCount');
+            const currentCount = savedPadCount || 10;
+            setPadCount(currentCount);
+            const loadedPads = generatePads(currentCount);
+            for (let i = 0; i < currentCount; i++) {
+              const data = await idbKeyval.get(`pad_${i}`);
+              if (data) {
+                const settings = { 
+                  loop: false, enableTrigger: false, triggerTime: '', ...data.settings 
+                };
+                loadedPads[i] = { 
+                  ...loadedPads[i], 
+                  ...data, 
+                  settings, 
+                  buffer: null, 
+                  url: data.blob ? URL.createObjectURL(data.blob) : null 
+                };
+                hasData = true;
+              }
+            }
+            if (hasData) setPads(loadedPads);
+            else setPads(generatePads(currentCount)); 
+          } catch (e) { console.error(e); } finally { setIsLoadingData(false); }
+        };
+        loadPads();
+      }, []);
+
+      const savePadToDb = async (pad, index) => {
+        try { const { buffer, url, ...dataToSave } = pad; await idbKeyval.set(`pad_${index}`, dataToSave); } catch (e) { console.error(e); }
+      };
+
+      const togglePadCount = async () => {
+        const newCount = padCount === 10 ? 20 : 10;
+        setPadCount(newCount);
+        await idbKeyval.set('padCount', newCount);
+        setPads(prev => {
+          const newPads = generatePads(newCount);
+          for (let i = 0; i < Math.min(prev.length, newCount); i++) {
+            newPads[i] = { ...prev[i], id: i, keyTrigger: KEY_MAP[i], color: COLORS[i] };
+            newPads[i].name = prev[i].name;
+            newPads[i].buffer = prev[i].buffer;
+            newPads[i].blob = prev[i].blob;
+            newPads[i].url = prev[i].url;
+            newPads[i].settings = prev[i].settings;
+          }
+          if (newCount > prev.length) { loadExtraPads(newPads, prev.length, newCount); }
+          return newPads;
+        });
+      };
+
+      const loadExtraPads = async (currentPadsArray, start, end) => {
+         const newPads = [...currentPadsArray];
+         let updated = false;
+         for (let i = start; i < end; i++) {
+            const data = await idbKeyval.get(`pad_${i}`);
+            if (data) {
+               const settings = { loop: false, enableTrigger: false, triggerTime: '', ...data.settings };
+               newPads[i] = { ...newPads[i], ...data, settings, buffer: null, url: data.blob ? URL.createObjectURL(data.blob) : null };
+               if (audioCtx && data.blob) {
+                  try {
+                    const ab = await data.blob.arrayBuffer();
+                    newPads[i].buffer = await audioCtx.decodeAudioData(ab);
+                  } catch(e) {}
+               }
+               updated = true;
+            }
+         }
+         if (updated) setPads(newPads);
+      };
+
+      const stopPad = useCallback((padId, mode = 'CUT', duration = 0) => {
+        const nodes = activeAudioNodes.current[padId];
+        if (!nodes || !audioCtx) return;
+        try {
+          const { source, gain } = nodes;
+          if (nodes.isStopping) return;
+          nodes.isStopping = true;
+          
+          let fadeTime = 0.02; 
+          if (stopMode === 'FADE') {
+            fadeTime = globalFadeDuration;
+          }
+
+          gain.gain.cancelScheduledValues(audioCtx.currentTime);
+          gain.gain.setValueAtTime(gain.gain.value, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + fadeTime);
+          source.stop(audioCtx.currentTime + fadeTime);
+          
+        } catch (e) { console.error(e); }
+      }, [audioCtx, stopMode, globalFadeDuration]);
+
+      const requestDelete = (padId) => { setConfirmDeleteId(padId); };
+
+      const executeDelete = async () => {
+        const padId = confirmDeleteId;
+        if (padId === null) return;
+        setConfirmDeleteId(null); 
+        // Force stop
+        if (activeAudioNodes.current[padId]) {
+           const nodes = activeAudioNodes.current[padId];
+           try { nodes.source.stop(); } catch(e){}
+           delete activeAudioNodes.current[padId];
+           setPlayingPads(prev => { const n = { ...prev }; delete n[padId]; return n; });
+        }
+        setPads(prev => {
+          const newPads = [...prev];
+          newPads[padId] = { id: padId, keyTrigger: KEY_MAP[padId], name: `Pad ${padId + 1}`, color: COLORS[padId], buffer: null, blob: null, url: null, settings: { start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false, enableTrigger: false, triggerTime: '' } };
+          return newPads;
+        });
+        try { await idbKeyval.del(`pad_${padId}`); } catch (e) { console.error(e); }
+      };
+
+      const handlePadSwap = async (targetId) => {
+        if (swapSourceId === null) setSwapSourceId(targetId);
+        else if (swapSourceId === targetId) setSwapSourceId(null);
+        else {
+          const newPads = [...pads];
+          const sourcePad = { ...newPads[swapSourceId] };
+          const targetPad = { ...newPads[targetId] };
+          const getContent = (p) => ({ name: p.name, color: p.color, buffer: p.buffer, blob: p.blob, url: p.url, settings: p.settings });
+          const sourceContent = getContent(sourcePad);
+          const targetContent = getContent(targetPad);
+          newPads[swapSourceId] = { ...newPads[swapSourceId], ...targetContent };
+          newPads[targetId] = { ...newPads[targetId], ...sourceContent };
+          setPads(newPads);
+          setSwapSourceId(null);
+          await savePadToDb(newPads[swapSourceId], swapSourceId);
+          await savePadToDb(newPads[targetId], targetId);
+        }
+      };
+
+      useEffect(() => { idbKeyval.set('startMode', startMode); }, [startMode]);
+      useEffect(() => { idbKeyval.set('stopMode', stopMode); }, [stopMode]);
+      useEffect(() => { idbKeyval.set('globalFadeDuration', globalFadeDuration); }, [globalFadeDuration]);
+      useEffect(() => { idbKeyval.set('playbackMode', playbackMode); }, [playbackMode]);
+
+      const handleExportProject = async () => {
+        if (!isReady) return; 
+        setIsProcessing(true);
+        try {
+          const zip = new JSZip();
+          const metadata = { 
+            startMode, stopMode, globalFadeDuration, playbackMode, 
+            padCount, timestamp: new Date().toISOString(), pads: [] 
+          };
+          pads.forEach((pad, idx) => {
+            const padMeta = { id: idx, name: pad.name, keyTrigger: pad.keyTrigger, settings: pad.settings, hasAudio: false };
+            if (pad.blob) {
+              const fileName = `audio_${idx}`;
+              zip.file(fileName, pad.blob);
+              padMeta.hasAudio = true;
+              padMeta.fileName = fileName;
+            }
+            metadata.pads.push(padMeta);
+          });
+          zip.file("project.json", JSON.stringify(metadata));
+          const content = await zip.generateAsync({ type: "blob" });
+          const url = URL.createObjectURL(content);
+          const link = document.createElement("a");
+          link.href = url;
+          const dateStr = new Date().toISOString().slice(0,10).replace(/-/g,'');
+          link.download = `TPAD_${dateStr}.tsp`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        } catch (err) { console.error(err); } finally { setIsProcessing(false); }
+      };
+
+      const handleImportProject = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setIsProcessing(true);
+        try {
+          const zip = await JSZip.loadAsync(file);
+          if (!zip.file("project.json")) throw new Error("Invalid project file");
+          const metaStr = await zip.file("project.json").async("string");
+          const metadata = JSON.parse(metaStr);
+          
+          if (metadata.startMode) setStartMode(metadata.startMode);
+          else if (metadata.transitionMode) setStartMode(metadata.transitionMode); 
+
+          if (metadata.stopMode) setStopMode(metadata.stopMode);
+          else if (metadata.transitionMode) setStopMode(metadata.transitionMode); 
+
+          if (metadata.globalFadeDuration) setGlobalFadeDuration(metadata.globalFadeDuration);
+          else if (metadata.crossfadeDuration) setGlobalFadeDuration(metadata.crossfadeDuration);
+
+          if (metadata.playbackMode) setPlaybackMode(metadata.playbackMode);
+
+          const count = metadata.padCount || 10;
+          setPadCount(count);
+          await idbKeyval.set('padCount', count);
+          const newPads = generatePads(count);
+          const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          if (!audioCtx) setAudioCtx(ctx);
+          await Promise.all(metadata.pads.map(async (padMeta) => {
+            const index = padMeta.id;
+            if (index >= 0 && index < count) {
+              const settings = { loop: false, enableTrigger: false, triggerTime: '', ...padMeta.settings };
+              newPads[index] = { ...newPads[index], name: padMeta.name, settings };
+              if (padMeta.hasAudio && padMeta.fileName) {
+                const audioBlob = await zip.file(padMeta.fileName).async("blob");
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+                newPads[index].blob = audioBlob;
+                newPads[index].buffer = audioBuffer;
+                newPads[index].url = URL.createObjectURL(audioBlob);
+                await savePadToDb(newPads[index], index); 
+              } else { await idbKeyval.del(`pad_${index}`); }
+            }
+          }));
+          setPads(newPads);
+          if (!isReady) setIsReady(true);
+          if (ctx.state === 'suspended') ctx.resume();
+        } catch (err) { console.error(err); } finally { setIsProcessing(false); e.target.value = null; }
+      };
+
+      const initAudio = async () => {
+        if (!audioCtx) {
+          setIsProcessing(true);
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          setAudioCtx(ctx);
+          const newPads = [...pads];
+          await Promise.all(newPads.map(async (pad, idx) => {
+            if (pad.blob && !pad.buffer) {
+              try {
+                const ab = await pad.blob.arrayBuffer();
+                newPads[idx].buffer = await ctx.decodeAudioData(ab);
+              } catch (e) { newPads[idx].name = "Load Failed"; }
+            }
+          }));
+          setPads(newPads);
+          setIsReady(true);
+          setIsProcessing(false);
+          ctx.resume();
+        } else if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+          setIsReady(true);
+        }
+      };
+
+      const triggerPad = useCallback((padId) => {
+        if (isEditMode) return;
+        const pad = padsRef.current[padId]; 
+        if (!pad || !pad.buffer || !audioCtx) return;
+        
+        const now = audioCtx.currentTime;
+        
+        if (activeAudioNodes.current[padId]) { 
+           stopPad(padId); 
+           return; 
+        }
+        
+        if (playbackMode === 'SWITCH') {
+            Object.keys(activeAudioNodes.current).forEach((activeId) => {
+              if (parseInt(activeId) !== padId) stopPad(parseInt(activeId));
+            });
+        }
+        
+        const source = audioCtx.createBufferSource();
+        source.buffer = pad.buffer;
+        source.loop = pad.settings.loop;
+        const gainNode = audioCtx.createGain();
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        const totalDuration = pad.buffer.duration;
+        const startTime = pad.settings.start * totalDuration;
+        const endTime = pad.settings.end * totalDuration;
+        const playDuration = Math.max(0, endTime - startTime);
+        
+        const targetVolume = pad.settings.volume;
+        
+        if (startMode === 'FADE') {
+           gainNode.gain.setValueAtTime(0, now);
+           gainNode.gain.linearRampToValueAtTime(targetVolume, now + Math.min(globalFadeDuration, playDuration));
+        } else {
+           gainNode.gain.setValueAtTime(0, now);
+           gainNode.gain.linearRampToValueAtTime(targetVolume, now + 0.02);
+        }
+        
+        if (!pad.settings.loop && pad.settings.fadeOut > 0) {
+          const fadeOutStart = now + playDuration - pad.settings.fadeOut;
+          if (fadeOutStart > now) {
+             gainNode.gain.setValueAtTime(targetVolume, fadeOutStart);
+             gainNode.gain.linearRampToValueAtTime(0, now + playDuration);
+          }
+        }
+
+        if (pad.settings.loop) {
+          source.loopStart = startTime;
+          source.loopEnd = endTime;
+          source.start(now, startTime); 
+        } else {
+          source.start(now, startTime, playDuration);
+        }
+        
+        activeAudioNodes.current[padId] = { source, gain: gainNode, isStopping: false };
+        setPlayingPads(prev => ({ ...prev, [padId]: { startTime: now, duration: playDuration, loop: pad.settings.loop } }));
+        
+        source.onended = () => {
+          if (activeAudioNodes.current[padId]?.source === source) {
+            delete activeAudioNodes.current[padId];
+            setPlayingPads(prev => { const n = { ...prev }; delete n[padId]; return n; });
+          }
+        };
+      }, [audioCtx, startMode, playbackMode, globalFadeDuration, stopPad]); 
+
+      const triggerPadFromTimer = (padId) => {
+         if (activeAudioNodes.current[padId]) {
+            return;
+         }
+         triggerPad(padId);
+      };
+
+      useEffect(() => {
+         triggerPadRef.current = triggerPadFromTimer;
+      }, [triggerPad]);
+
+      const handleFileUpload = async (e, index) => {
+        const file = e.target.files[0];
+        if (!file || !audioCtx) return;
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          setPads((prev) => {
+            const newPads = [...prev];
+            const updatedPad = { ...newPads[index], name: file.name.substring(0, 12), buffer: audioBuffer, blob: file, url: URL.createObjectURL(file) };
+            newPads[index] = updatedPad;
+            savePadToDb(updatedPad, index);
+            return newPads;
+          });
+        } catch (err) { alert("読み込みに失敗しました。"); }
+      };
+
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (!isReady || isEditMode || e.target.tagName === 'INPUT') return;
+          const key = e.key.toLowerCase();
+          const idx = KEY_MAP.indexOf(key);
+          if (idx !== -1 && idx < padCount) triggerPad(idx);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, [isReady, triggerPad, isEditMode, padCount]);
+
+      const updatePadSettings = (id, newSettings) => {
+        setPads(prev => {
+          const newPads = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
+          const updatedPad = newPads.find(p => p.id === id);
+          if(updatedPad) savePadToDb(updatedPad, id);
+          return newPads;
+        });
+      };
+      const handleEditorClose = (padId) => setEditingPadId(null);
+
+      if (!isReady) {
+        return (
+          <div className="flex flex-col items-center justify-center h-screen bg-slate-900 text-white">
+            <h1 className="text-4xl font-bold mb-4 tracking-tighter">T-PAD</h1>
+            <button onClick={initAudio} disabled={isLoadingData || isProcessing} className={`px-8 py-4 rounded-full font-bold text-xl shadow-[0_0_20px_rgba(37,99,235,0.5)] transition-all transform hover:scale-105 disabled:opacity-50 ${isProcessing ? 'bg-amber-600' : 'bg-blue-600 hover:bg-blue-500'}`}>
+              {isLoadingData ? 'データ読込中...' : isProcessing ? '処理中...' : 'アプリを開始'}
+            </button>
+            <p className="mt-4 text-xs text-slate-500">タップしてオーディオエンジンを起動</p>
+          </div>
+        );
+      }
+
+      const gridClass = padCount === 10 
+        ? "grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4" 
+        : "grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-4";
+
+      return (
+        <div className="flex flex-col h-screen bg-slate-900 text-slate-100 overflow-hidden select-none">
+          <header className="flex flex-col gap-2 px-4 py-3 bg-slate-800 border-b border-slate-700 shadow-md z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2"><Music className="text-blue-400" /><h1 className="text-lg sm:text-xl font-bold tracking-tight">T-PAD</h1></div>
+              <div className="flex items-center gap-2">
+                 <button onClick={togglePadCount} disabled={isProcessing} className="flex items-center gap-1 px-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold text-slate-300 disabled:opacity-30 mr-2" title="パッド数を切替"><Grid size={14} /> {padCount}</button>
+                 <button onClick={() => { setIsEditMode(!isEditMode); setSwapSourceId(null); }} className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold transition-colors ${isEditMode ? 'bg-amber-600 text-white animate-pulse' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}`}><Edit3 size={14} /> {isEditMode ? 'EDIT中' : 'EDIT'}</button>
+                 <button onClick={() => setShowManual(true)} className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold bg-slate-700 hover:bg-slate-600 text-slate-300" title="マニュアル"><BookOpen size={16} /></button>
+                 <div className="flex items-center gap-1 bg-slate-700/50 rounded p-0.5">
+                   <button onClick={handleExportProject} disabled={isProcessing || isEditMode} className="p-1.5 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-30"><Download size={16} /></button>
+                   <button onClick={() => projectInputRef.current.click()} disabled={isProcessing || isEditMode} className="p-1.5 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-30"><FolderOpen size={16} /></button>
+                   <input type="file" accept=".tsp,.zip" ref={projectInputRef} className="hidden" onChange={handleImportProject} />
+                 </div>
+              </div>
+            </div>
+            {!isEditMode && (
+              <div className="flex flex-wrap items-center justify-center gap-6 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                 {/* Playback Mode */}
+                 <div className="flex flex-col items-center">
+                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Mode</span>
+                    <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
+                      <button onClick={() => setPlaybackMode('SWITCH')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${playbackMode === 'SWITCH' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}>SWITCH</button>
+                      <button onClick={() => setPlaybackMode('MIX')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${playbackMode === 'MIX' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>MIX</button>
+                    </div>
+                 </div>
+
+                 {/* Start Mode */}
+                 <div className="flex flex-col items-center">
+                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Start</span>
+                    <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
+                      <button onClick={() => setStartMode('CUT')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${startMode === 'CUT' ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-white'}`}>CUT</button>
+                      <button onClick={() => setStartMode('FADE')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${startMode === 'FADE' ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'}`}>FADE</button>
+                    </div>
+                 </div>
+
+                 {/* Stop Mode */}
+                 <div className="flex flex-col items-center">
+                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Stop</span>
+                    <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
+                      <button onClick={() => setStopMode('CUT')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${stopMode === 'CUT' ? 'bg-red-500 text-white' : 'text-slate-400 hover:text-white'}`}>CUT</button>
+                      <button onClick={() => setStopMode('FADE')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${stopMode === 'FADE' ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'}`}>FADE</button>
+                    </div>
+                 </div>
+
+                 {/* Common Fade Duration (Visible if any FADE is active) */}
+                 {(startMode === 'FADE' || stopMode === 'FADE') && (
+                   <div className="flex flex-col items-center animate-in fade-in zoom-in duration-200">
+                      <span className="text-xs font-bold uppercase text-slate-400 mb-1">Fade Time</span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex bg-slate-800 rounded-md border border-slate-700 overflow-hidden">
+                          {FADE_DURATIONS.map(dur => (<button key={dur} onClick={() => setGlobalFadeDuration(dur)} className={`px-3 py-2 text-sm font-bold border-r border-slate-700 last:border-0 transition-colors ${globalFadeDuration === dur ? 'bg-blue-500/20 text-blue-300' : 'text-slate-500 hover:bg-slate-700 hover:text-slate-300'}`}>{dur}s</button>))}
+                        </div>
+                        <input 
+                           type="number" 
+                           step="0.1" 
+                           min="0"
+                           className="w-16 bg-slate-800 border border-slate-700 rounded-md px-2 py-2 text-sm font-bold text-center text-white focus:outline-none focus:border-blue-500" 
+                           value={globalFadeDuration}
+                           onChange={(e) => setGlobalFadeDuration(Math.max(0, parseFloat(e.target.value) || 0))}
+                        />
+                      </div>
+                   </div>
+                 )}
+              </div>
+            )}
+            {isEditMode && (
+              <div className="bg-amber-900/30 text-amber-200 text-xs text-center py-1 px-2 rounded border border-amber-800/50 flex items-center justify-center gap-2"><span>パッドをタップして移動(入替)</span><span className="w-px h-3 bg-amber-700"></span><span>右上の<Trash2 size={10} className="inline"/>で削除</span></div>
+            )}
+          </header>
+
+          <main className="flex-1 p-2 sm:p-4 overflow-y-auto">
+            {isProcessing && <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"><div className="text-xl font-bold animate-pulse">処理中...</div></div>}
+            <div className={`${gridClass} h-full max-h-[800px] mx-auto max-w-6xl`}>
+              {pads.map((pad, idx) => (
+                <div key={pad.id} className="relative w-full h-full">
+                  <PadBase 
+                    pad={pad} 
+                    playingInfo={playingPads[pad.id]} 
+                    audioCtx={audioCtx}
+                    isEditMode={isEditMode} 
+                    isSwapSelected={swapSourceId === pad.id}
+                    onInteraction={() => {
+                      if (isEditMode) { handlePadSwap(pad.id); }
+                      else if (!pad.buffer && !pad.blob) { fileInputRefs.current[idx].click(); }
+                      else { triggerPad(pad.id); }
+                    }}
+                  />
+                  <div className="absolute top-0 right-0 z-50 p-2 flex gap-2 pointer-events-auto">
+                    {isEditMode && (pad.buffer || pad.blob) && (
+                      <button 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); requestDelete(pad.id); }}
+                        className="p-3 bg-red-600 hover:bg-red-500 text-white rounded-full shadow-lg touch-manipulation cursor-pointer"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    )}
+                    {!isEditMode && (pad.buffer || pad.blob) && (
+                      <button 
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); setEditingPadId(pad.id); }}
+                        className="p-2 bg-black/40 hover:bg-black/60 text-white rounded-full shadow-sm touch-manipulation cursor-pointer"
+                      >
+                        <Settings size={16} />
+                      </button>
+                    )}
+                  </div>
+                  {isEditMode && <div className="absolute top-2 left-2 z-40 opacity-50 pointer-events-none text-white"><Move size={16} /></div>}
+                </div>
+              ))}
+            </div>
+          </main>
+          {pads.map((pad, idx) => (
+            <input key={pad.id} type="file" accept="audio/*,.wav,.mp3,.m4a,.aif,.aiff,.aac,.flac,.ogg" className="hidden" ref={el => fileInputRefs.current[idx] = el} onChange={(e) => handleFileUpload(e, idx)} />
+          ))}
+          {editingPadId !== null && (
+            <EditorModal 
+              pad={pads.find(p => p.id === editingPadId)} 
+              onClose={() => handleEditorClose(editingPadId)} 
+              onUpdate={(settings) => updatePadSettings(editingPadId, settings)} 
+              audioCtx={audioCtx} 
+            />
+          )}
+          {showManual && (
+            <ManualModal onClose={() => setShowManual(false)} />
+          )}
+          {confirmDeleteId !== null && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+              <div className="bg-slate-800 rounded-xl p-6 max-w-sm w-full border border-slate-700 shadow-2xl">
+                <div className="flex items-center gap-3 text-amber-500 mb-4">
+                  <AlertTriangle size={32} />
+                  <h3 className="text-lg font-bold text-white">確認</h3>
+                </div>
+                <p className="text-slate-300 mb-6">このパッドの音声ファイルを完全に削除しますか？</p>
+                <div className="flex gap-3 justify-end">
+                  <button onClick={() => setConfirmDeleteId(null)} className="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white font-medium transition-colors">キャンセル</button>
+                  <button onClick={executeDelete} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 text-white font-bold shadow-lg transition-colors">削除する</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    // --- Manual Modal ---
+    const ManualModal = ({ onClose }) => {
+      return (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="bg-white text-slate-800 rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="bg-slate-900 text-white p-4 flex justify-between items-center flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <BookOpen className="text-blue-400" />
+                <h2 className="text-lg font-bold">操作マニュアル</h2>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full"><X size={20} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-12">
+                <section>
+                  <h2 className="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-6 flex items-center gap-2">
+                    <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
+                    画面の見方と基本操作
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-slate-800 p-4 rounded-xl shadow-lg text-white relative">
+                      <div className="border-b border-slate-700 pb-2 mb-2 flex justify-between items-center">
+                        <span className="font-bold">T-PAD</span>
+                        <div className="flex gap-2">
+                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">Grid 10</span>
+                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">EDIT</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        <div className="aspect-square bg-blue-600 border-b-4 border-blue-800 rounded-xl flex items-center justify-center relative"><span className="text-xs">Pad 1</span></div>
+                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
+                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
+                      </div>
+                      <div className="absolute top-12 left-10 w-8 h-8 border-2 border-yellow-400 rounded-full animate-ping"></div>
+                      <div className="absolute top-14 left-20 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded shadow">
+                        タップして再生
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <h3 class="font-bold text-lg mb-2">音声の読み込み</h3>
+                        <p class="text-sm leading-relaxed">
+                          「空」または「音声読込」と書かれたパッドをタップ（クリック）すると、ファイル選択画面が開きます。<br/>
+                          PCの場合はドラッグ＆ドロップでも読み込めます。
+                        </p>
+                      </div>
+                      <div>
+                        <h3 class="font-bold text-lg mb-2">再生と停止</h3>
+                        <p class="text-sm leading-relaxed">
+                          読み込み済みのパッドをタップすると再生します。<br/>
+                          もう一度タップすると停止します（設定により挙動が変わります）。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h2 class="text-xl font-bold border-b-2 border-green-500 pb-2 mb-6 flex items-center gap-2">
+                    <span class="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+                    再生モードの設定（画面上部）
+                  </h2>
+                  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="grid gap-6 md:grid-cols-3 text-center">
+                      <div class="space-y-2">
+                        <div class="inline-flex bg-slate-800 rounded p-1">
+                          <span class="px-2 py-1 bg-indigo-600 text-white text-xs rounded">SWITCH</span>
+                          <span class="px-2 py-1 text-slate-400 text-xs">MIX</span>
+                        </div>
+                        <h4 class="font-bold text-sm">Mode (全体動作)</h4>
+                        <ul class="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
+                          <li><b>SWITCH</b>: 音を切り替えます。別のパッドを押すと前の音は止まります。</li>
+                          <li><b>MIX</b>: 音を重ねます。BGMの上に効果音を鳴らす時などに使います。</li>
+                        </ul>
+                      </div>
+                      <div class="space-y-2">
+                        <div class="inline-flex bg-slate-800 rounded p-1">
+                          <span class="px-2 py-1 bg-green-600 text-white text-xs rounded">CUT</span>
+                          <span class="px-2 py-1 text-slate-400 text-xs">FADE</span>
+                        </div>
+                        <h4 class="font-bold text-sm">Start (開始時)</h4>
+                        <ul class="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
+                          <li><b>CUT</b>: 押した瞬間に本来の音量で再生します。ポン出し向け。</li>
+                          <li><b>FADE</b>: ふわっと音が入ります（クロスフェード用）。</li>
+                        </ul>
+                      </div>
+                      <div class="space-y-2">
+                        <div class="inline-flex bg-slate-800 rounded p-1">
+                          <span class="px-2 py-1 text-slate-400 text-xs">CUT</span>
+                          <span class="px-2 py-1 bg-blue-500 text-white text-xs rounded">FADE</span>
+                        </div>
+                        <h4 class="font-bold text-sm">Stop (停止時)</h4>
+                        <ul class="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
+                          <li><b>CUT</b>: 即座に音が止まります。</li>
+                          <li><b>FADE</b>: 余韻を残してフェードアウトします。</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t text-center">
+                      <span class="text-xs font-bold bg-slate-200 px-2 py-1 rounded">Fade Time</span>
+                      <span class="text-xs ml-2">フェードイン・アウトにかかる時間を設定します（0.5秒〜3.0秒または数値入力）。</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h2 class="text-xl font-bold border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
+                    <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
+                    波形編集と詳細設定
+                  </h2>
+                  <div class="space-y-6">
+                    <p class="text-sm">
+                      パッドの右上にある <span class="inline-block bg-black text-white p-1 rounded-full"><Settings size={12} /></span> ボタンを押すと編集画面が開きます。
+                    </p>
+                    <div class="bg-slate-900 rounded-lg p-6 text-white">
+                      <div class="h-24 bg-slate-800 rounded relative overflow-hidden mb-4">
+                        <div class="absolute inset-0 flex items-center justify-center text-blue-500 opacity-30">Waveform Graphic</div>
+                        <div class="absolute top-0 bottom-0 left-[20%] w-0.5 bg-green-500"></div>
+                        <div class="absolute top-0 bottom-0 left-[80%] w-0.5 bg-red-500"></div>
+                        <div class="absolute top-0 bottom-0 left-[40%] w-0.5 bg-white shadow-white shadow-[0_0_5px]"></div>
+                      </div>
+                      <div class="flex justify-between text-xs mb-4">
+                        <span class="text-green-400 font-bold">開始位置 (Start)</span>
+                        <span class="text-white font-bold">再生ヘッド (Current)</span>
+                        <span class="text-red-400 font-bold">終了位置 (End)</span>
+                      </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                      <div class="space-y-3">
+                         <h4 class="font-bold text-slate-700 border-b border-slate-200 pb-1">再生コントロール</h4>
+                         <ul class="text-sm space-y-2 text-slate-600">
+                           <li><b>プレビュー再生:</b> 編集中の設定で音を確認できます。</li>
+                           <li><b>波形タップ:</b> タップした位置から即座に再生します（シーク機能）。</li>
+                         </ul>
+                      </div>
+                       <div class="space-y-3">
+                         <h4 class="font-bold text-slate-700 border-b border-slate-200 pb-1">範囲とエフェクト</h4>
+                         <ul class="text-sm space-y-2 text-slate-600">
+                           <li><b>範囲指定:</b> 緑（開始）と赤（終了）の線をドラッグするか、下のスライダー・数値入力で調整します。</li>
+                           <li><b>現在位置ボタン:</b> 再生中の位置を開始/終了点に設定できます。</li>
+                           <li><b>フェード設定:</b> パッド個別のフェードイン・アウト時間を設定できます。</li>
+                           <li><b>リピート/タイマー:</b> ループ再生や時刻指定再生の設定ができます。</li>
+                         </ul>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h2 class="text-xl font-bold border-b-2 border-orange-500 pb-2 mb-6 flex items-center gap-2">
+                    <span class="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span>
+                    EDITモード（パッドの整理）
+                  </h2>
+                  <div class="bg-amber-50 p-6 rounded-xl border border-amber-200">
+                    <div class="flex items-start gap-4">
+                      <div class="flex-shrink-0 mt-1">
+                         <span class="font-bold bg-amber-200 text-amber-900 px-2 py-1 rounded text-sm border border-amber-300">EDIT</span>
+                      </div>
+                      <div>
+                        <p class="text-sm text-amber-900 mb-4 font-medium">
+                          画面右上の <span class="font-bold">EDIT</span> ボタンを押すと、編集モード（背景がオレンジ色）になります。<br/>
+                          このモードでは音は再生されず、パッドの整理が行えます。
+                        </p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                           <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                              <h4 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
+                                <span class="bg-red-500 text-white rounded-full p-1"><Trash2 size={12} /></span>
+                                削除 (Delete)
+                              </h4>
+                              <p class="text-xs text-slate-600">
+                                パッド右上に表示されるゴミ箱アイコンをタップすると、そのパッドの音声ファイルと設定を完全に消去します。
+                              </p>
+                           </div>
+                           <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                              <h4 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
+                                <span class="bg-slate-400 text-white rounded-full p-1"><Move size={12} /></span>
+                                並べ替え (Swap)
+                              </h4>
+                              <p class="text-xs text-slate-600">
+                                1つ目のパッドをタップして選択（枠が点滅）し、次に2つ目のパッドをタップすると、2つの場所を入れ替えることができます。
+                              </p>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h2 class="text-xl font-bold border-b-2 border-purple-500 pb-2 mb-6 flex items-center gap-2">
+                    <span class="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">5</span>
+                    データの保存と読み込み
+                  </h2>
+                  <div class="text-sm space-y-4">
+                    <p>
+                      このアプリはブラウザにデータを自動保存しますが、別のPCに移したりバックアップを取るために「プロジェクトファイル」として書き出すことができます。
+                    </p>
+                    <div class="flex gap-4 flex-wrap">
+                      <div class="bg-white p-4 rounded shadow border border-slate-200 flex-1">
+                        <h4 class="font-bold flex items-center gap-2 mb-2"><Download className="text-blue-600" size={16} /> SAVE (保存)</h4>
+                        <p class="text-slate-600">現在のすべてのパッド設定と音声データを、1つのファイル（.tsp）としてダウンロードします。</p>
+                      </div>
+                      <div class="bg-white p-4 rounded shadow border border-slate-200 flex-1">
+                        <h4 class="font-bold flex items-center gap-2 mb-2"><FolderOpen className="text-green-600" size={16} /> LOAD (読込)</h4>
+                        <p class="text-slate-600">保存した .tsp ファイルを読み込んで、以前の状態を復元します。（現在のデータは上書きされます）</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+            </div>
+            <div className="p-4 bg-slate-100 text-center flex-shrink-0 border-t border-slate-200">
+              <button onClick={onClose} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold text-sm transition-colors">閉じる</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const PadBase = ({ pad, playingInfo, audioCtx, isEditMode, isSwapSelected, onInteraction }) => {
+      const hasAudio = !!pad.buffer || !!pad.blob;
+      const progressRef = useRef(null);
+      const padRef = useRef(null);
+      const animationRef = useRef(null);
+      const timeDisplayRef = useRef(null);
+
+      const handlePointer = (e) => {
+        if (isEditMode) { if (e.type === 'click') onInteraction(); } 
+        else { if (!hasAudio && e.type === 'click') onInteraction(); if (hasAudio && e.type === 'pointerdown') onInteraction(); }
+      };
+
+      let totalDuration = 0;
+      if (hasAudio && pad.buffer) {
+        totalDuration = pad.buffer.duration * (pad.settings.end - pad.settings.start);
+      }
+
+      useEffect(() => {
+        if (!playingInfo || !audioCtx) {
+          if (progressRef.current) progressRef.current.style.width = '0%';
+          if (padRef.current) padRef.current.classList.remove('animate-flash');
+          if (timeDisplayRef.current && totalDuration > 0) { timeDisplayRef.current.innerText = formatDuration(totalDuration); }
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+          return;
+        }
+
+        const update = () => {
+          const now = audioCtx.currentTime;
+          const elapsed = now - playingInfo.startTime;
+          const duration = playingInfo.duration;
+          let displayTime = 0;
+          let percent = 0;
+
+          if (playingInfo.loop) {
+            const loopPos = elapsed % duration;
+            percent = (loopPos / duration) * 100;
+            displayTime = duration - loopPos;
+            if (padRef.current) padRef.current.classList.remove('animate-flash');
+          } else {
+            const remaining = Math.max(0, duration - elapsed);
+            percent = Math.min(100, Math.max(0, (elapsed / duration) * 100));
+            displayTime = remaining;
+            if (remaining <= 5 && remaining > 0) {
+              if (padRef.current) padRef.current.classList.add('animate-flash');
+            } else {
+              if (padRef.current) padRef.current.classList.remove('animate-flash');
+            }
+            if (percent >= 100 && padRef.current) padRef.current.classList.remove('animate-flash');
+          }
+
+          if (progressRef.current) progressRef.current.style.width = `${percent}%`;
+          if (timeDisplayRef.current) timeDisplayRef.current.innerText = formatDuration(displayTime);
+          if (playingInfo.loop || (elapsed < duration)) animationRef.current = requestAnimationFrame(update);
+        };
+        animationRef.current = requestAnimationFrame(update);
+        return () => cancelAnimationFrame(animationRef.current);
+      }, [playingInfo, audioCtx, totalDuration]);
+
+      return (
+        <div 
+          ref={padRef}
+          className={`w-full h-full rounded-xl border-b-4 transition-all active:border-b-0 active:translate-y-1 cursor-pointer relative overflow-hidden ${hasAudio ? pad.color : 'bg-slate-700 border-slate-600'} ${hasAudio ? 'border-black/20' : ''} ${playingInfo ? 'brightness-125 scale-[0.98] border-b-0 translate-y-1 ring-4 ring-white/50' : ''} ${isEditMode ? 'ring-2 ring-amber-500/50 border-amber-600 border-dashed' : ''} ${isSwapSelected ? 'ring-4 ring-amber-400 animate-pulse scale-95 opacity-80' : ''}`} 
+          onPointerDown={handlePointer} onClick={handlePointer}
+        >
+          {playingInfo && <div className="absolute bottom-0 left-0 h-full bg-white/20 pointer-events-none transition-all duration-75 ease-linear" ref={progressRef} style={{width: '0%'}}></div>}
+          {/* Icons top left: Loop and Timer */}
+          <div className="absolute top-2 left-2 flex gap-1 pointer-events-none text-white/50">
+             {pad.settings.loop && hasAudio && !isEditMode && <Repeat size={14} />}
+             {pad.settings.enableTrigger && hasAudio && !isEditMode && <Timer size={14} className="text-yellow-400" />}
+          </div>
+
+          <div className="flex flex-col items-center justify-center h-full p-2 sm:p-4 pointer-events-none select-none relative z-10">
+            <span className="absolute top-1 left-2 font-mono text-xl sm:text-2xl font-bold opacity-50 text-black/40">{isEditMode ? '' : pad.keyTrigger}</span>
+            {!hasAudio ? (
+              <div className="flex flex-col items-center text-slate-400"><Upload size={32} className={`mb-2 opacity-50 ${isEditMode ? 'hidden' : ''}`} /><span className="text-sm font-medium">{isEditMode ? '空' : '音声読込'}</span></div>
+            ) : (
+              <div className="text-center w-full">
+                 <div className="font-bold text-sm sm:text-lg text-white drop-shadow-md break-all line-clamp-2 leading-tight px-1 mb-1">{pad.name}</div>
+                 {!isEditMode && (<div className="flex items-center justify-center gap-1 text-[10px] sm:text-[12px] font-mono font-bold bg-black/30 rounded-full px-3 py-1 mx-auto w-fit text-white border border-white/20 shadow-sm"><Clock size={10} className="sm:w-3 sm:h-3" /> <span ref={timeDisplayRef}>{formatDuration(totalDuration)}</span></div>)}
+                 {playingInfo && (<div className="absolute bottom-1 left-0 right-0 flex justify-center"><div className="animate-pulse text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-white/80">PLAYING</div></div>)}
+                 {/* Timer Info Display */}
+                 {!isEditMode && pad.settings.enableTrigger && !playingInfo && (
+                    <div className="absolute bottom-1 left-0 right-0 flex justify-center text-[9px] text-yellow-300 font-mono bg-black/40 w-fit mx-auto px-1 rounded">
+                       @{pad.settings.triggerTime}
+                    </div>
+                 )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const EditorModal = ({ pad, onClose, onUpdate, audioCtx }) => {
+      const canvasRef = useRef(null);
+      const [zoomX, setZoomX] = useState(1);
+      const [zoomY, setZoomY] = useState(1);
+      const [scrollPos, setScrollPos] = useState(0); 
+      const [draggingHandle, setDraggingHandle] = useState(null);
+      const [hoverHandle, setHoverHandle] = useState(null);
+      const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+      const previewSourceRef = useRef(null);
+      const [showResetConfirm, setShowResetConfirm] = useState(false);
+      const [seekPos, setSeekPos] = useState(null); 
+      const previewTimeRef = useRef(null); // Ref for time text update
+
+      const previewStartTimeRef = useRef(0);
+      const animationRef = useRef(null);
+
+      const totalDuration = pad.buffer ? pad.buffer.duration : 0;
+
+      // Convert Gain to dB
+      const toDB = (gain) => {
+        if (gain <= 0.0001) return -100;
+        return (20 * Math.log10(gain));
+      };
+
+      // Convert dB to Gain
+      const fromDB = (db) => {
+        if (db <= -100) return 0;
+        return Math.pow(10, db / 20);
+      };
+
+      const handleTimeChange = (type, secondsStr) => {
+         const seconds = parseFloat(secondsStr);
+         if (isNaN(seconds)) return;
+         let ratio = seconds / totalDuration;
+         if (ratio < 0) ratio = 0;
+         if (ratio > 1) ratio = 1;
+         
+         if (type === 'start') {
+            if (ratio < pad.settings.end) onUpdate({ start: ratio });
+         } else {
+            if (ratio > pad.settings.start) onUpdate({ end: ratio });
+         }
+      };
+
+      // Helper to calculate current preview position
+      const getCurrentRatio = () => {
+         if (isPreviewPlaying && pad.buffer && audioCtx) {
+             const now = audioCtx.currentTime;
+             const duration = pad.buffer.duration;
+             const playStart = pad.settings.start * duration;
+             const playEnd = pad.settings.end * duration;
+             const playLength = playEnd - playStart;
+             const elapsed = now - previewStartTimeRef.current;
+             
+             if (pad.settings.loop) {
+                 const loopOffset = elapsed % playLength;
+                 return (playStart + loopOffset) / duration;
+             } else {
+                 return (elapsed / duration); // Simple ratio from buffer start (since offset included in previewStartTimeRef logic)
+                 // Note: In startPreview, previewStartTimeRef = now - startTimeOffset.
+                 // So elapsed = (now) - (now - startTimeOffset) = startTimeOffset + actual_elapsed.
+                 // So elapsed / duration is correct absolute ratio.
+             }
+         } else if (seekPos !== null) {
+             return seekPos;
+         } else {
+             return pad.settings.start;
+         }
+      };
+
+      // Preview Logic
+      const togglePreview = () => {
+        if (isPreviewPlaying) {
+          if (previewSourceRef.current) {
+            try { previewSourceRef.current.stop(); } catch(e) {}
+            previewSourceRef.current = null;
+          }
+          setIsPreviewPlaying(false);
+          if(animationRef.current) cancelAnimationFrame(animationRef.current);
+        } else {
+          startPreview(null);
+        }
+      };
+
+      const startPreview = (startRatio = null) => {
+          if (!pad.buffer || !audioCtx) return;
+
+          if (previewSourceRef.current) {
+             try { previewSourceRef.current.stop(); } catch(e){}
+             previewSourceRef.current = null;
+          }
+
+          const source = audioCtx.createBufferSource();
+          source.buffer = pad.buffer;
+          const gainNode = audioCtx.createGain();
+          source.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          const now = audioCtx.currentTime;
+          
+          let playStartRatio = startRatio !== null ? startRatio : (seekPos !== null ? seekPos : pad.settings.start);
+          if (playStartRatio < 0) playStartRatio = 0;
+          if (playStartRatio > 1) playStartRatio = 0;
+
+          const startTimeOffset = playStartRatio * totalDuration;
+          const settingsStart = pad.settings.start * totalDuration;
+          const settingsEnd = pad.settings.end * totalDuration;
+
+          gainNode.gain.value = pad.settings.volume;
+          
+          if (Math.abs(playStartRatio - pad.settings.start) < 0.01 && pad.settings.fadeIn > 0) {
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(pad.settings.volume, now + Math.min(pad.settings.fadeIn, (settingsEnd - startTimeOffset)));
+          }
+          
+          if (!pad.settings.loop && pad.settings.fadeOut > 0) {
+             const playDuration = Math.max(0, settingsEnd - startTimeOffset);
+             const fadeOutStart = now + playDuration - pad.settings.fadeOut;
+             if (fadeOutStart > now) {
+                 gainNode.gain.setValueAtTime(pad.settings.volume, fadeOutStart);
+                 gainNode.gain.linearRampToValueAtTime(0, now + playDuration);
+             }
+          }
+
+          source.loop = pad.settings.loop;
+          if (pad.settings.loop) {
+            source.loopStart = settingsStart;
+            source.loopEnd = settingsEnd;
+          }
+
+          source.start(now, startTimeOffset);
+          
+          if (!pad.settings.loop) {
+             const durationToPlay = Math.max(0, settingsEnd - startTimeOffset);
+             source.stop(now + durationToPlay);
+          }
+
+          previewSourceRef.current = source;
+          previewStartTimeRef.current = now - startTimeOffset;
+          
+          setIsPreviewPlaying(true);
+          source.onended = () => {
+            // Ended naturally (or stopped manually - handled by state toggle)
+          };
+      };
+
+      useEffect(() => {
+        return () => {
+          if (previewSourceRef.current) {
+            try { previewSourceRef.current.stop(); } catch(e) {}
+          }
+          if(animationRef.current) cancelAnimationFrame(animationRef.current);
+        };
+      }, []);
+
+      const getScreenX = useCallback((normalizedValue, width, totalSamples) => {
+         const viewSizeSamples = Math.floor(totalSamples / zoomX);
+         const maxScrollSamples = totalSamples - viewSizeSamples;
+         const startSample = Math.floor(scrollPos * maxScrollSamples);
+         const globalSample = normalizedValue * totalSamples;
+         return ((globalSample - startSample) / viewSizeSamples) * width;
+      }, [zoomX, scrollPos]);
+
+      const getNormalizedFromScreenX = useCallback((screenX, width, totalSamples) => {
+        const viewSizeSamples = Math.floor(totalSamples / zoomX);
+        const maxScrollSamples = totalSamples - viewSizeSamples;
+        const startSample = Math.floor(scrollPos * maxScrollSamples);
+        const relativeSample = (screenX / width) * viewSizeSamples;
+        const globalSample = startSample + relativeSample;
+        return Math.max(0, Math.min(1, globalSample / totalSamples));
+      }, [zoomX, scrollPos]);
+
+      const handlePointerDown = (e) => {
+        if (!canvasRef.current || !pad.buffer) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const totalSamples = pad.buffer.length;
+        const startX = getScreenX(pad.settings.start, width, totalSamples);
+        const endX = getScreenX(pad.settings.end, width, totalSamples);
+        const threshold = 50; 
+        
+        if (Math.abs(x - startX) < threshold) { setDraggingHandle('start'); e.target.setPointerCapture(e.pointerId); }
+        else if (Math.abs(x - endX) < threshold) { setDraggingHandle('end'); e.target.setPointerCapture(e.pointerId); }
+        else {
+           const clickRatio = getNormalizedFromScreenX(x, width, totalSamples);
+           setSeekPos(clickRatio);
+           if (isPreviewPlaying) {
+              startPreview(clickRatio);
+           }
+           setDraggingHandle('seek');
+           e.target.setPointerCapture(e.pointerId);
+        }
+      };
+
+      const handlePointerMove = (e) => {
+        if (!canvasRef.current || !pad.buffer) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const totalSamples = pad.buffer.length;
+        if (draggingHandle) {
+          const newVal = getNormalizedFromScreenX(x, width, totalSamples);
+          if (draggingHandle === 'start') { if (newVal < pad.settings.end) onUpdate({ start: newVal }); }
+          else if (draggingHandle === 'end') { if (newVal > pad.settings.start) onUpdate({ end: newVal }); }
+          else if (draggingHandle === 'seek') { setSeekPos(newVal); }
+          return;
+        }
+        const startX = getScreenX(pad.settings.start, width, totalSamples);
+        const endX = getScreenX(pad.settings.end, width, totalSamples);
+        const threshold = 50; 
+        if (Math.abs(x - startX) < threshold) setHoverHandle('start');
+        else if (Math.abs(x - endX) < threshold) setHoverHandle('end');
+        else setHoverHandle(null);
+      };
+
+      const handlePointerUp = (e) => {
+        if (draggingHandle === 'seek') {
+           if (isPreviewPlaying) { startPreview(seekPos); }
+        }
+        setDraggingHandle(null);
+        if(e.target) e.target.releasePointerCapture(e.pointerId);
+      };
+
+      useEffect(() => {
+        const render = () => {
+            if (!pad.buffer || !canvasRef.current) return;
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const totalSamples = pad.buffer.length;
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, width, height);
+            const data = pad.buffer.getChannelData(0);
+            const viewSizeSamples = Math.floor(totalSamples / zoomX);
+            const maxScrollSamples = totalSamples - viewSizeSamples;
+            const startSample = Math.floor(scrollPos * maxScrollSamples);
+            const endSample = startSample + viewSizeSamples;
+            const step = Math.ceil(viewSizeSamples / width);
+            const amp = (height / 2);
+            
+            // Volume factor for visualization
+            const volume = pad.settings.volume; 
+
+            ctx.fillStyle = '#60a5fa'; ctx.beginPath();
+            for (let i = 0; i < width; i++) {
+                let min = 1.0, max = -1.0;
+                const sampleIndexStart = startSample + (i * step);
+                for (let j = 0; j < step; j++) {
+                    const idx = sampleIndexStart + j;
+                    if (idx < endSample && idx < totalSamples) {
+                        let datum = data[idx] * zoomY * volume; // Volume reflected here
+                        if (datum < -1) datum = -1;
+                        if (datum > 1) datum = 1;
+                        if (datum < min) min = datum;
+                        if (datum > max) max = datum;
+                    }
+                }
+                if (min > max) { min = 0; max = 0; }
+                const y1 = (1 + min) * amp; const y2 = (1 + max) * amp;
+                ctx.fillRect(i, y1, 1, Math.max(1, y2 - y1));
+            }
+            
+            const startX = getScreenX(pad.settings.start, width, totalSamples);
+            const endX = getScreenX(pad.settings.end, width, totalSamples);
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            if (startX > 0) ctx.fillRect(0, 0, Math.min(width, startX), height);
+            if (endX < width) ctx.fillRect(Math.max(0, endX), 0, width - Math.max(0, endX), height);
+            
+            const drawLine = (x, color, isHovered) => {
+                if (x < -5 || x > width + 5) return;
+                ctx.strokeStyle = color; ctx.lineWidth = isHovered ? 4 : 2;
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+                ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, 10, isHovered ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+            };
+            drawLine(startX, '#22c55e', draggingHandle === 'start' || hoverHandle === 'start');
+            drawLine(endX, '#ef4444', draggingHandle === 'end' || hoverHandle === 'end');
+
+            if (seekPos !== null) {
+               const seekX = getScreenX(seekPos, width, totalSamples);
+               if (seekX >= 0 && seekX <= width) {
+                  ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
+                  ctx.beginPath(); ctx.moveTo(seekX, 0); ctx.lineTo(seekX, height); ctx.stroke();
+               }
+            }
+
+            // Determine time to display: Playhead if playing, else SeekPos if set, else StartPos
+            let currentTimeDisplay = pad.settings.start * totalDuration;
+            
+            if (seekPos !== null && !isPreviewPlaying) {
+               currentTimeDisplay = seekPos * totalDuration;
+            }
+
+            if (isPreviewPlaying && pad.buffer) {
+                const now = audioCtx.currentTime;
+                const duration = pad.buffer.duration;
+                const playStart = pad.settings.start * duration;
+                const playEnd = pad.settings.end * duration;
+                const playLength = playEnd - playStart;
+                const elapsed = now - previewStartTimeRef.current;
+                let currentPosRatio = 0;
+                if (pad.settings.loop) {
+                    const loopOffset = elapsed % playLength;
+                    currentPosRatio = (playStart + loopOffset) / duration;
+                } else {
+                    currentPosRatio = (elapsed / duration); 
+                }
+                
+                // Update current time for display
+                currentTimeDisplay = currentPosRatio * duration;
+
+                if (currentPosRatio <= 1.0) {
+                    const playheadX = getScreenX(currentPosRatio, width, totalSamples);
+                    if (playheadX >= 0 && playheadX <= width) {
+                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.moveTo(playheadX, 0); ctx.lineTo(playheadX, height); ctx.stroke();
+                    }
+                }
+                animationRef.current = requestAnimationFrame(render);
+            }
+
+            // Update Text Ref
+            if (previewTimeRef.current) {
+               previewTimeRef.current.innerText = formatDuration(currentTimeDisplay);
+            }
+        };
+        render();
+        return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+      }, [pad, zoomX, zoomY, scrollPos, draggingHandle, hoverHandle, isPreviewPlaying, getScreenX, audioCtx, seekPos]);
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="bg-slate-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl border border-slate-700 flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-900/50 flex-shrink-0">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Scissors size={18} /> 波形編集: {pad.name}</h2>
+              <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-6 overflow-y-auto flex-1">
+              
+              {/* Preview Button Section */}
+              <div className="flex justify-center pb-2 items-center gap-4">
+                  <button onClick={togglePreview} className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-lg shadow-lg transition-all active:scale-95 touch-manipulation ${isPreviewPlaying ? 'bg-amber-500 text-white animate-pulse' : 'bg-green-600 text-white hover:bg-green-500'}`}>
+                     {isPreviewPlaying ? <Square fill="currentColor" size={20}/> : <Play fill="currentColor" size={20}/>}
+                     {isPreviewPlaying ? "停止" : "プレビュー再生"}
+                  </button>
+                  <div className="bg-black/30 text-white font-mono text-xl px-4 py-2 rounded border border-white/10 shadow-inner w-32 text-center" ref={previewTimeRef}>
+                     0.00s
+                  </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-700/30 p-2 rounded-lg">
+                  <div className="flex items-center gap-2"><span className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1"><ArrowLeftRight size={12} /> 時間 (横)</span><button onClick={() => setZoomX(prev => Math.max(1, prev - 1))} className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-50 touch-manipulation" disabled={zoomX <= 1}><ZoomOut size={16} /></button><span className="text-xs font-mono w-8 text-center">{zoomX}x</span><button onClick={() => setZoomX(prev => Math.min(50, prev + 1))} className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 touch-manipulation"><ZoomIn size={16} /></button></div>
+                  <div className="flex items-center gap-2"><span className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1"><ArrowUpDown size={12} /> 振幅 (縦)</span><button onClick={() => setZoomY(prev => Math.max(1, prev - 0.5))} className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-50 touch-manipulation" disabled={zoomY <= 1}><ZoomOut size={16} /></button><span className="text-xs font-mono w-10 text-center">{zoomY.toFixed(1)}x</span><button onClick={() => setZoomY(prev => Math.min(10, prev + 0.5))} className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-slate-300 touch-manipulation"><ZoomIn size={16} /></button></div>
+                  <button onClick={() => { setZoomX(1); setZoomY(1); setScrollPos(0); }} className="ml-auto text-xs flex items-center gap-1 px-3 py-1.5 bg-slate-600 hover:bg-slate-500 rounded text-white touch-manipulation"><Maximize size={12} /> 表示リセット</button>
+                </div>
+                <div className="relative h-48 w-full rounded-lg overflow-hidden ring-1 ring-slate-600 bg-slate-900 shadow-inner group">
+                  <canvas ref={canvasRef} width={800} height={192} style={{ touchAction: 'none' }} className={`w-full h-full object-cover ${hoverHandle ? 'cursor-ew-resize' : 'cursor-default'}`} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} />
+                  {zoomX === 1 && !draggingHandle && !hoverHandle && (<div className="absolute bottom-2 right-2 text-[10px] text-slate-500 pointer-events-none opacity-50">緑(開始)・赤(終了)の線をドラッグして調整</div>)}
+                </div>
+                <div className={`transition-opacity duration-200 ${zoomX > 1 ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}><input type="range" min="0" max="1" step="0.001" value={scrollPos} onChange={(e) => setScrollPos(parseFloat(e.target.value))} className="w-full accent-slate-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" /></div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-700/50">
+                <div className="space-y-4 p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">範囲指定 (秒)</h3>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs items-center">
+                       <span className="text-green-400 font-bold">開始位置</span>
+                       <div className="flex gap-2 items-center">
+                          <button 
+                            onClick={() => {
+                               const currentRatio = getCurrentRatio();
+                               if (currentRatio < pad.settings.end) onUpdate({ start: currentRatio });
+                            }}
+                            className="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-200 border border-slate-500 flex items-center gap-1"
+                            title="現在位置を設定"
+                          >
+                            <ArrowDown size={10} /> 現在位置
+                          </button>
+                          <input type="number" step="0.001" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-20 text-white focus:outline-none focus:border-green-500" value={(pad.settings.start * totalDuration).toFixed(3)} onChange={(e) => handleTimeChange('start', e.target.value)} />
+                       </div>
+                    </div>
+                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.start} onChange={(e) => { const val = parseFloat(e.target.value); if (val < pad.settings.end) onUpdate({ start: val }); }} className="w-full accent-green-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs items-center">
+                       <span className="text-red-400 font-bold">終了位置</span>
+                       <div className="flex gap-2 items-center">
+                          <button 
+                            onClick={() => {
+                               const currentRatio = getCurrentRatio();
+                               if (currentRatio > pad.settings.start) onUpdate({ end: currentRatio });
+                            }}
+                            className="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-200 border border-slate-500 flex items-center gap-1"
+                            title="現在位置を設定"
+                          >
+                            <ArrowDown size={10} /> 現在位置
+                          </button>
+                          <input type="number" step="0.001" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-20 text-white focus:outline-none focus:border-red-500" value={(pad.settings.end * totalDuration).toFixed(3)} onChange={(e) => handleTimeChange('end', e.target.value)} />
+                       </div>
+                    </div>
+                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.end} onChange={(e) => { const val = parseFloat(e.target.value); if (val > pad.settings.start) onUpdate({ end: val }); }} className="w-full accent-red-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                  </div>
+                </div>
+                <div className="space-y-4 p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">エフェクト</h3>
+                  <div className="flex items-center justify-between bg-slate-900/50 p-2 rounded mb-2">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-1"><Repeat size={14} /> リピート再生</span>
+                    <button onClick={() => onUpdate({ loop: !pad.settings.loop })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.loop ? 'bg-blue-600' : 'bg-slate-600'}`}>
+                      <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${pad.settings.loop ? 'translate-x-5' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+                  <div className="bg-slate-900/50 p-2 rounded mb-2 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-300 flex items-center gap-1"><Timer size={14} className="text-yellow-400" /> タイマー再生</span>
+                      <button onClick={() => onUpdate({ enableTrigger: !pad.settings.enableTrigger })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.enableTrigger ? 'bg-yellow-600' : 'bg-slate-600'}`}>
+                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${pad.settings.enableTrigger ? 'translate-x-5' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                    {pad.settings.enableTrigger && (
+                      <div className="flex items-center justify-between text-sm"><span className="text-slate-400 text-xs">開始時刻(JST/端末)</span><input type="time" step="1" value={pad.settings.triggerTime || ''} onChange={(e) => onUpdate({ triggerTime: e.target.value })} className="bg-slate-800 text-white border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500" /></div>
+                    )}
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-xs items-center">
+                        <span>フェードイン</span>
+                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeIn} onChange={(e) => onUpdate({ fadeIn: Math.max(0, parseFloat(e.target.value) || 0) })} />
+                      </div>
+                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeIn} onChange={(e) => onUpdate({ fadeIn: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-xs items-center">
+                        <span>フェードアウト</span>
+                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeOut} onChange={(e) => onUpdate({ fadeOut: Math.max(0, parseFloat(e.target.value) || 0) })} />
+                      </div>
+                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeOut} onChange={(e) => onUpdate({ fadeOut: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    </div>
+                  </div>
+                  <div className="space-y-1 pt-2 border-t border-slate-600/50">
+                     <div className="flex justify-between text-xs items-center">
+                       <div className="flex items-center gap-2"><Volume2 size={14} /> 音量</div>
+                       <div className="flex items-center gap-1">
+                         <input type="number" step="0.1" min="-100" max="12" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-16 text-white focus:outline-none focus:border-yellow-500 font-mono" value={pad.settings.volume <= 0.0001 ? -100 : (20 * Math.log10(pad.settings.volume)).toFixed(1)} onChange={(e) => { let db = parseFloat(e.target.value); if (isNaN(db)) db = -100; if (db > 12) db = 12; onUpdate({ volume: db <= -100 ? 0 : Math.pow(10, db / 20) }); }} />
+                         <span className="text-xs text-slate-400">dB</span>
+                       </div>
+                     </div>
+                    <input type="range" min="0" max="4.0" step="0.1" value={pad.settings.volume} onChange={(e) => onUpdate({ volume: parseFloat(e.target.value) })} className="w-full accent-yellow-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                  </div>
+                  <div className="pt-4 border-t border-slate-600/50 text-right">
+                    <button onClick={() => { if(confirm("設定を初期状態に戻しますか？")) { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false }); } }} className="text-xs text-slate-400 hover:text-white underline">設定を初期化</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-slate-900/50 flex items-center justify-center gap-6 flex-shrink-0 relative">
+               <button onClick={() => setShowResetConfirm(true)} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md font-medium text-sm transition-colors touch-manipulation">初期化</button>
+              <button onClick={onClose} className="px-8 py-3 bg-blue-600 hover:bg-blue-500 rounded-full font-bold text-sm transition-colors shadow-lg touch-manipulation">完了</button>
+            </div>
+            {showResetConfirm && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm rounded-2xl">
+                <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-2xl text-center max-w-xs m-4">
+                   <div className="flex justify-center mb-4 text-amber-500"><AlertTriangle size={32} /></div>
+                   <h3 className="text-lg font-bold text-white mb-2">設定の初期化</h3>
+                   <p className="text-slate-300 text-sm mb-6 leading-relaxed">開始・終了位置を含むすべての設定を初期状態に戻しますか？<br/>(音声ファイルは残ります)</p>
+                   <div className="flex gap-3 justify-center">
+                     <button onClick={() => setShowResetConfirm(false)} className="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors">キャンセル</button>
+                     <button onClick={() => { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false, enableTrigger: false, triggerTime: '' }); setShowResetConfirm(false); }} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 text-white text-sm font-bold shadow-lg transition-colors">初期化する</button>
+                   </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<SoundBoardApp />);
+  </script>
+</body>
+</html>
