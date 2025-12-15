@@ -83,7 +83,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-v2';
+        const CACHE_NAME = 't-pad-v3'; // Incremented version to force update
         const URLS_TO_CACHE = [
           './',
           './index.html',
@@ -97,6 +97,7 @@
         ];
 
         self.addEventListener('install', (event) => {
+          self.skipWaiting(); // Force update
           event.waitUntil(
             caches.open(CACHE_NAME).then((cache) => {
               return Promise.all(
@@ -591,6 +592,9 @@
          triggerPadRef.current = triggerPadFromTimer;
       }, [triggerPad]);
 
+      // --- Project Import Input Change ---
+      // Removed accept attribute to allow all files on iOS
+      
       const handleFileUpload = async (e, index) => {
         const file = e.target.files[0];
         if (!file || !audioCtx) return;
@@ -656,15 +660,16 @@
                  <div className="flex items-center gap-1 bg-slate-700/50 rounded p-0.5">
                    <button onClick={handleExportProject} disabled={isProcessing || isEditMode} className="p-1.5 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-30"><Download size={16} /></button>
                    <button onClick={() => projectInputRef.current.click()} disabled={isProcessing || isEditMode} className="p-1.5 hover:bg-slate-600 rounded text-slate-300 disabled:opacity-30"><FolderOpen size={16} /></button>
-                   <input type="file" accept=".tsp,.zip" ref={projectInputRef} className="hidden" onChange={handleImportProject} />
+                   {/* Removed accept attribute to allow all files on iOS/Android for compatibility */}
+                   <input type="file" ref={projectInputRef} className="hidden" onChange={handleImportProject} />
                  </div>
               </div>
             </div>
             {!isEditMode && (
-              <div className="flex flex-wrap items-center justify-center gap-6 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+              <div className="flex flex-wrap items-center justify-center gap-3 bg-slate-900/50 p-1.5 rounded-lg border border-slate-700/50">
                  {/* Playback Mode */}
                  <div className="flex flex-col items-center">
-                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Mode</span>
+                    <span className="text-[10px] text-slate-400 mb-0.5">Mode</span>
                     <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
                       <button onClick={() => setPlaybackMode('SWITCH')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${playbackMode === 'SWITCH' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}>SWITCH</button>
                       <button onClick={() => setPlaybackMode('MIX')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${playbackMode === 'MIX' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>MIX</button>
@@ -673,7 +678,7 @@
 
                  {/* Start Mode */}
                  <div className="flex flex-col items-center">
-                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Start</span>
+                    <span className="text-[10px] text-slate-400 mb-0.5">Start</span>
                     <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
                       <button onClick={() => setStartMode('CUT')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${startMode === 'CUT' ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-white'}`}>CUT</button>
                       <button onClick={() => setStartMode('FADE')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${startMode === 'FADE' ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'}`}>FADE</button>
@@ -682,7 +687,7 @@
 
                  {/* Stop Mode */}
                  <div className="flex flex-col items-center">
-                    <span className="text-xs font-bold uppercase text-slate-400 mb-1">Stop</span>
+                    <span className="text-[10px] text-slate-400 mb-0.5">Stop</span>
                     <div className="flex bg-slate-800 rounded-md p-0.5 border border-slate-700">
                       <button onClick={() => setStopMode('CUT')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${stopMode === 'CUT' ? 'bg-red-500 text-white' : 'text-slate-400 hover:text-white'}`}>CUT</button>
                       <button onClick={() => setStopMode('FADE')} className={`px-4 py-2 rounded text-sm font-bold transition-all ${stopMode === 'FADE' ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'}`}>FADE</button>
@@ -692,7 +697,7 @@
                  {/* Common Fade Duration (Visible if any FADE is active) */}
                  {(startMode === 'FADE' || stopMode === 'FADE') && (
                    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-200">
-                      <span className="text-xs font-bold uppercase text-slate-400 mb-1">Fade Time</span>
+                      <span className="text-[10px] text-slate-400 mb-0.5">Fade Time</span>
                       <div className="flex items-center gap-2">
                         <div className="flex bg-slate-800 rounded-md border border-slate-700 overflow-hidden">
                           {FADE_DURATIONS.map(dur => (<button key={dur} onClick={() => setGlobalFadeDuration(dur)} className={`px-3 py-2 text-sm font-bold border-r border-slate-700 last:border-0 transition-colors ${globalFadeDuration === dur ? 'bg-blue-500/20 text-blue-300' : 'text-slate-500 hover:bg-slate-700 hover:text-slate-300'}`}>{dur}s</button>))}
