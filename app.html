@@ -83,7 +83,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-v3'; // Incremented version to force update
+        const CACHE_NAME = 't-pad-v4'; // Incremented version
         const URLS_TO_CACHE = [
           './',
           './index.html',
@@ -470,18 +470,48 @@
           if (!audioCtx) setAudioCtx(ctx);
           await Promise.all(metadata.pads.map(async (padMeta) => {
             const index = padMeta.id;
+            // Only process if index fits in current pad count
             if (index >= 0 && index < count) {
-              const settings = { loop: false, enableTrigger: false, triggerTime: '', ...padMeta.settings };
-              newPads[index] = { ...newPads[index], name: padMeta.name, settings };
-              if (padMeta.hasAudio && padMeta.fileName) {
-                const audioBlob = await zip.file(padMeta.fileName).async("blob");
-                const arrayBuffer = await audioBlob.arrayBuffer();
-                const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                newPads[index].blob = audioBlob;
-                newPads[index].buffer = audioBuffer;
-                newPads[index].url = URL.createObjectURL(audioBlob);
-                await savePadToDb(newPads[index], index); 
-              } else { await idbKeyval.del(`pad_${index}`); }
+              try {
+                // Merge settings with defaults to ensure all fields exist
+                const defaultSettings = { 
+                    start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, 
+                    loop: false, enableTrigger: false, triggerTime: '' 
+                };
+                const settings = { ...defaultSettings, ...padMeta.settings };
+                
+                // Update pad info
+                newPads[index] = { 
+                    ...newPads[index], 
+                    name: padMeta.name, 
+                    settings 
+                };
+
+                if (padMeta.hasAudio && padMeta.fileName) {
+                  const fileData = zip.file(padMeta.fileName);
+                  if (fileData) {
+                      const audioBlob = await fileData.async("blob");
+                      newPads[index].blob = audioBlob;
+                      newPads[index].url = URL.createObjectURL(audioBlob);
+                      
+                      try {
+                          const arrayBuffer = await audioBlob.arrayBuffer();
+                          const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+                          newPads[index].buffer = audioBuffer;
+                      } catch (decodeError) {
+                          console.error(`Audio decode failed for pad ${index}`, decodeError);
+                          // Keep blob/url even if decode fails, maybe user can retry or re-save
+                      }
+                      
+                      await savePadToDb(newPads[index], index); 
+                  }
+                } else { 
+                   // No audio, clear DB entry for this pad to be safe
+                   await idbKeyval.del(`pad_${index}`); 
+                }
+              } catch (padError) {
+                  console.error(`Error loading pad ${index}`, padError);
+              }
             }
           }));
           setPads(newPads);
@@ -514,6 +544,7 @@
         }
       };
 
+      // Updated Trigger Logic with Start Mode
       const triggerPad = useCallback((padId) => {
         if (isEditMode) return;
         const pad = padsRef.current[padId]; 
@@ -521,11 +552,13 @@
         
         const now = audioCtx.currentTime;
         
+        // If already playing, stop using Stop Mode (Toggle)
         if (activeAudioNodes.current[padId]) { 
            stopPad(padId); 
            return; 
         }
         
+        // Exclusive Playback logic based on Playback Mode
         if (playbackMode === 'SWITCH') {
             Object.keys(activeAudioNodes.current).forEach((activeId) => {
               if (parseInt(activeId) !== padId) stopPad(parseInt(activeId));
@@ -592,9 +625,6 @@
          triggerPadRef.current = triggerPadFromTimer;
       }, [triggerPad]);
 
-      // --- Project Import Input Change ---
-      // Removed accept attribute to allow all files on iOS
-      
       const handleFileUpload = async (e, index) => {
         const file = e.target.files[0];
         if (!file || !audioCtx) return;
