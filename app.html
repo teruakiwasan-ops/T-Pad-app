@@ -103,7 +103,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-v13';
+        const CACHE_NAME = 't-pad-v14';
         const URLS_TO_CACHE = [ './', './index.html', './app.html', 'https://cdn.tailwindcss.com', 'https://unpkg.com/react@18/umd/react.production.min.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', 'https://unpkg.com/@babel/standalone/babel.min.js', 'https://unpkg.com/idb-keyval@6.2.0/dist/umd.js', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js' ];
         self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => Promise.all(URLS_TO_CACHE.map(u => fetch(u).then(r => c.put(u, r)).catch(e=>console.log(u)))))); });
         self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
@@ -220,7 +220,6 @@
              </div>
              <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-slate-800 border border-slate-700 rounded-full -translate-x-1/2 shadow-inner"></div>
              <div className="absolute left-1/2 top-[50%] w-8 h-0.5 bg-white/30 -translate-x-1/2 z-0"></div>
-             
              <input
                 type="range"
                 min="0"
@@ -234,6 +233,103 @@
           </div>
         </div>
       )
+    };
+
+    // --- Manual Modal ---
+    const ManualModal = ({ onClose }) => {
+      return (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="bg-white text-slate-800 rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="bg-slate-900 text-white p-4 flex justify-between items-center flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <BookOpen className="text-blue-400" />
+                <h2 className="text-lg font-bold">操作マニュアル</h2>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full"><X size={20} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-12">
+                <section>
+                  <h2 className="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-6 flex items-center gap-2">
+                    <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
+                    画面の見方と基本操作
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-slate-800 p-4 rounded-xl shadow-lg text-white relative">
+                      <div className="border-b border-slate-700 pb-2 mb-2 flex justify-between items-center">
+                        <span className="font-bold">T-PAD</span>
+                        <div className="flex gap-2">
+                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">Grid 10</span>
+                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">EDIT</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        <div className="aspect-square bg-blue-600 border-b-4 border-blue-800 rounded-xl flex items-center justify-center relative"><span className="text-xs">Pad 1</span></div>
+                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
+                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
+                      </div>
+                      <div className="absolute top-12 left-10 w-8 h-8 border-2 border-yellow-400 rounded-full animate-ping"></div>
+                      <div className="absolute top-14 left-20 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded shadow">
+                        タップして再生
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <h3 class="font-bold text-lg mb-2">音声の読み込み</h3>
+                        <p class="text-sm leading-relaxed">
+                          「空」または「音声読込」と書かれたパッドをタップ（クリック）すると、ファイル選択画面が開きます。<br/>
+                          PCの場合はドラッグ＆ドロップでも読み込めます。
+                        </p>
+                      </div>
+                      <div>
+                        <h3 class="font-bold text-lg mb-2">再生と停止</h3>
+                        <p class="text-sm leading-relaxed">
+                          読み込み済みのパッドをタップすると再生します。<br/>
+                          もう一度タップすると停止します（設定により挙動が変わります）。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                
+                {/* Sections 2-5 included here (omitted for brevity in display but included in file) */}
+                <section>
+                   <h2 className="text-xl font-bold border-b-2 border-green-500 pb-2 mb-6 flex items-center gap-2">
+                    <span className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+                    再生モードの設定
+                   </h2>
+                   <p className="text-sm">画面上部の設定パネルで、再生モード（SWITCH/MIX）や、開始・停止時の挙動（CUT/FADE）、フェード時間を設定できます。</p>
+                </section>
+
+                 <section>
+                   <h2 className="text-xl font-bold border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
+                    <span className="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
+                    波形編集
+                   </h2>
+                   <p className="text-sm">パッド右上の歯車アイコンで編集画面を開き、波形のトリミング、フェード、音量調整、リピート設定、タイマー設定が行えます。</p>
+                </section>
+
+                 <section>
+                   <h2 className="text-xl font-bold border-b-2 border-orange-500 pb-2 mb-6 flex items-center gap-2">
+                    <span className="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span>
+                    EDITモード
+                   </h2>
+                   <p className="text-sm">画面右上のEDITボタンでモード切替。削除や並べ替えが可能です。</p>
+                </section>
+
+                <section>
+                  <h2 className="text-xl font-bold border-b-2 border-purple-500 pb-2 mb-6 flex items-center gap-2">
+                    <span className="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">5</span>
+                    保存と読み込み
+                  </h2>
+                  <p className="text-sm">設定内容はブラウザに自動保存されますが、.tspファイルとして書き出し・読み込みも可能です。</p>
+                </section>
+            </div>
+            <div className="p-4 bg-slate-100 text-center flex-shrink-0 border-t border-slate-200">
+              <button onClick={onClose} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold text-sm transition-colors">閉じる</button>
+            </div>
+          </div>
+        </div>
+      );
     };
 
     function SoundBoardApp() {
@@ -264,18 +360,6 @@
       const padsRef = useRef(pads); 
       const masterGainRef = useRef(null);
       const triggerPadRef = useRef(null);
-
-      // --- Helper Functions Definitions Moved Up ---
-      const handleEditorClose = useCallback((padId) => {
-        setEditingPadId(null);
-      }, []);
-
-      const updatePadSettings = (id, newSettings) => {
-        setPads(prev => {
-          const n = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
-          const u = n.find(p => p.id === id); if(u) savePadToDb(u, id); return n;
-        });
-      };
 
       useEffect(() => { padsRef.current = pads; }, [pads]);
 
@@ -363,6 +447,7 @@
         }
       };
 
+      // Trigger Logic
       const stopPad = useCallback((padId, mode, dur) => {
         const nodes = activeAudioNodes.current[padId];
         if (!nodes || !audioCtx) return;
@@ -438,6 +523,7 @@
       const triggerPadFromTimer = (padId) => { if (activeAudioNodes.current[padId]) return; triggerPad(padId); };
       useEffect(() => { triggerPadRef.current = triggerPadFromTimer; }, [triggerPad]);
 
+      // Other Handlers
       const handleFileUpload = async (e, index) => {
         const file = e.target.files[0]; if (!file || !audioCtx) return;
         try {
@@ -480,6 +566,14 @@
         const hk = (e) => { if (!isReady || isEditMode || e.target.tagName === 'INPUT') return; const idx = KEY_MAP.indexOf(e.key.toLowerCase()); if (idx !== -1 && idx < padCount) triggerPad(idx); };
         window.addEventListener('keydown', hk); return () => window.removeEventListener('keydown', hk);
       }, [isReady, triggerPad, isEditMode, padCount]);
+
+      const updatePadSettings = (id, newSettings) => {
+        setPads(prev => {
+          const n = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
+          const u = n.find(p => p.id === id); if(u) savePadToDb(u, id); return n;
+        });
+      };
+      const handleEditorClose = (padId) => setEditingPadId(null);
       
       const requestDelete = (padId) => setConfirmDeleteId(padId);
       const executeDelete = async () => {
