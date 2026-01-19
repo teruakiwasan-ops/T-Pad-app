@@ -103,7 +103,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-v10';
+        const CACHE_NAME = 't-pad-v13';
         const URLS_TO_CACHE = [ './', './index.html', './app.html', 'https://cdn.tailwindcss.com', 'https://unpkg.com/react@18/umd/react.production.min.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', 'https://unpkg.com/@babel/standalone/babel.min.js', 'https://unpkg.com/idb-keyval@6.2.0/dist/umd.js', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js' ];
         self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => Promise.all(URLS_TO_CACHE.map(u => fetch(u).then(r => c.put(u, r)).catch(e=>console.log(u)))))); });
         self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
@@ -185,26 +185,14 @@
     // --- Master Fader Component ---
     const MasterFader = ({ volume, onChange }) => {
       const db = toDB(volume);
-      // Calc curve: Slider 0-2 -> Volume 0-4
-      // Slider val = sqrt(volume)
       const sliderVal = Math.sqrt(volume);
 
       const handleChange = (e) => {
          const sVal = parseFloat(e.target.value);
-         // Volume = sVal^2
          const newVol = sVal * sVal;
          onChange(newVol);
       };
 
-      // Calculate position percentages for scale marks (bottom%)
-      // Range 0-2. 
-      // 0dB = Vol 1.0 -> Slider 1.0 -> 50%
-      // +12dB = Vol 4.0 -> Slider 2.0 -> 100%
-      // -6dB = Vol 0.5 -> Slider 0.707 -> 35.3%
-      // -12dB = Vol 0.25 -> Slider 0.5 -> 25%
-      // -24dB = Vol 0.063 -> Slider 0.25 -> 12.5%
-      // -Inf = Vol 0 -> Slider 0 -> 0%
-      
       return (
         <div className="h-full w-20 sm:w-24 bg-slate-900 border-l border-slate-700 flex flex-col items-center py-4 relative z-20 flex-shrink-0 shadow-xl">
           <div className="text-[10px] text-slate-400 mb-1 sm:mb-2 font-bold tracking-widest flex flex-col items-center gap-1">
@@ -221,7 +209,6 @@
              {db <= -90 ? '-Inf' : (db > 0 ? '+' : '') + db.toFixed(1)} <span className="text-[8px] text-slate-500">dB</span>
           </div>
           <div className="flex-1 relative w-full flex justify-center">
-             {/* Scale Ticks */}
              <div className="absolute top-0 bottom-0 right-0 w-full h-full pointer-events-none text-[8px] text-slate-500 font-mono">
                 <span className="absolute right-1 top-0 translate-y-[-50%]">+12</span>
                 <div className="absolute right-1 top-[29.3%] translate-y-[-50%] flex items-center gap-1"><span className="w-1 h-px bg-slate-600"></span>+6</div>
@@ -231,11 +218,7 @@
                 <div className="absolute right-1 top-[87.5%] translate-y-[-50%] flex items-center gap-1"><span className="w-1 h-px bg-slate-600"></span>-24</div>
                 <span className="absolute right-1 bottom-0 translate-y-[50%]">Inf</span>
              </div>
-
-             {/* Track Line */}
              <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-slate-800 border border-slate-700 rounded-full -translate-x-1/2 shadow-inner"></div>
-             
-             {/* 0dB Marker Line */}
              <div className="absolute left-1/2 top-[50%] w-8 h-0.5 bg-white/30 -translate-x-1/2 z-0"></div>
              
              <input
@@ -281,6 +264,18 @@
       const padsRef = useRef(pads); 
       const masterGainRef = useRef(null);
       const triggerPadRef = useRef(null);
+
+      // --- Helper Functions Definitions Moved Up ---
+      const handleEditorClose = useCallback((padId) => {
+        setEditingPadId(null);
+      }, []);
+
+      const updatePadSettings = (id, newSettings) => {
+        setPads(prev => {
+          const n = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
+          const u = n.find(p => p.id === id); if(u) savePadToDb(u, id); return n;
+        });
+      };
 
       useEffect(() => { padsRef.current = pads; }, [pads]);
 
@@ -343,7 +338,6 @@
           setIsProcessing(true);
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           
-          // Master Gain Setup
           const masterGain = ctx.createGain();
           masterGain.gain.value = masterVolume;
           masterGain.connect(ctx.destination);
@@ -369,7 +363,6 @@
         }
       };
 
-      // Trigger Logic
       const stopPad = useCallback((padId, mode, dur) => {
         const nodes = activeAudioNodes.current[padId];
         if (!nodes || !audioCtx) return;
@@ -401,7 +394,6 @@
         source.buffer = pad.buffer;
         source.loop = pad.settings.loop;
         const gainNode = audioCtx.createGain();
-        // Route to Master Gain
         source.connect(gainNode);
         gainNode.connect(masterGainRef.current);
         
@@ -446,7 +438,6 @@
       const triggerPadFromTimer = (padId) => { if (activeAudioNodes.current[padId]) return; triggerPad(padId); };
       useEffect(() => { triggerPadRef.current = triggerPadFromTimer; }, [triggerPad]);
 
-      // Other Handlers
       const handleFileUpload = async (e, index) => {
         const file = e.target.files[0]; if (!file || !audioCtx) return;
         try {
@@ -489,13 +480,6 @@
         const hk = (e) => { if (!isReady || isEditMode || e.target.tagName === 'INPUT') return; const idx = KEY_MAP.indexOf(e.key.toLowerCase()); if (idx !== -1 && idx < padCount) triggerPad(idx); };
         window.addEventListener('keydown', hk); return () => window.removeEventListener('keydown', hk);
       }, [isReady, triggerPad, isEditMode, padCount]);
-
-      const updatePadSettings = (id, newSettings) => {
-        setPads(prev => {
-          const n = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
-          const u = n.find(p => p.id === id); if(u) savePadToDb(u, id); return n;
-        });
-      };
       
       const requestDelete = (padId) => setConfirmDeleteId(padId);
       const executeDelete = async () => {
@@ -516,7 +500,6 @@
         }
       };
       
-      // Export/Import (Shortened for brevity but functional)
       const handleExportProject = async () => { if(!isReady) return; setIsProcessing(true); try { const z = new JSZip(); const m = { startMode, stopMode, globalFadeDuration, playbackMode, padCount, timestamp: new Date().toISOString(), pads: [] }; pads.forEach((p,i)=>{ const pm={id:i, name:p.name, settings:p.settings, hasAudio:false}; if(p.blob){ z.file(`a_${i}`, p.blob); pm.hasAudio=true; pm.fileName=`a_${i}`; } m.pads.push(pm); }); z.file("project.json", JSON.stringify(m)); const c = await z.generateAsync({type:"blob"}); const u = URL.createObjectURL(c); const a = document.createElement("a"); a.href=u; a.download=`TPAD_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.tsp`; document.body.appendChild(a); a.click(); document.body.removeChild(a); } catch(e){} finally { setIsProcessing(false); } };
       const handleImportProject = async (e) => { const f = e.target.files[0]; if(!f) return; setIsProcessing(true); try { const z = await JSZip.loadAsync(f); const m = JSON.parse(await z.file("project.json").async("string")); if(m.startMode) setStartMode(m.startMode); if(m.stopMode) setStopMode(m.stopMode); if(m.globalFadeDuration) setGlobalFadeDuration(m.globalFadeDuration); if(m.playbackMode) setPlaybackMode(m.playbackMode); const c = m.padCount||10; setPadCount(c); await idbKeyval.set('padCount', c); const np = generatePads(c); const ctx = audioCtx||new (window.AudioContext||window.webkitAudioContext)(); if(!audioCtx) setAudioCtx(ctx); await Promise.all(m.pads.map(async (pm)=>{ const idx = pm.id; if(idx>=0 && idx<c){ np[idx] = {...np[idx], name:pm.name, settings:{loop:false,enableTrigger:false,triggerTime:'', ...pm.settings}}; if(pm.hasAudio){ const b = await z.file(pm.fileName).async("blob"); np[idx].blob=b; np[idx].url=URL.createObjectURL(b); try{np[idx].buffer=await ctx.decodeAudioData(await b.arrayBuffer());}catch(x){} await savePadToDb(np[idx], idx); } else { await idbKeyval.del(`pad_${idx}`); } } })); setPads(np); if(!isReady) setIsReady(true); if(ctx.state==='suspended') ctx.resume(); } catch(e){} finally{setIsProcessing(false); e.target.value=null;} };
 
@@ -832,11 +815,15 @@
             const startSample = Math.floor(scrollPos * maxScrollSamples);
             const step = Math.ceil(viewSizeSamples / width); const amp = (height / 2);
             const volume = pad.settings.volume; 
+            
+            // Optimization for performance
+            const skipStep = Math.max(1, Math.ceil(step / 50)); 
+
             ctx.fillStyle = '#60a5fa'; ctx.beginPath();
             for (let i = 0; i < width; i++) {
                 let min = 1.0, max = -1.0;
                 const sampleIndexStart = startSample + (i * step);
-                for (let j = 0; j < step; j++) {
+                for (let j = 0; j < step; j += skipStep) {
                     const idx = sampleIndexStart + j;
                     if (idx < startSample + viewSizeSamples && idx < totalSamples) {
                         let datum = data[idx] * zoomY * volume;
