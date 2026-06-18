@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%230f172a'%3E%3Crect width='512' height='512' fill='%230f172a'/%3E%3Cpath d='M96 256h320' stroke='%23334155' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M140 256v-40m40 80v-120m40 80v-60m40 140v-180m40 120v-50m40 80v-100m40 40v-20' stroke='%233b82f6' stroke-width='32' stroke-linecap='round'/%3E%3Ctext x='256' y='430' font-family='sans-serif' font-size='100' font-weight='bold' fill='white' text-anchor='middle' letter-spacing='4'%3ET-PAD%3C/text%3E%3C/svg%3E">
 
-  <!-- PWA Manifest (Fix: Cleaned up quotes) -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlQtUEFEIiwKICAic2hvcnRfbmFtZSI6ICJULTIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFt7CiAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCxiYXNlNjQsaPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48cmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgcng9JzEwMCcgZmlsbD0nIzBmMTcyYScvPjxwYXRoIGQ9J005NiAyNTZoMzIwJyBzdHJva2U9JyMzMzQxNTUnIHN0cm9rZS13aWR0aD0nMTYnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjxwYXRoIGQ9J00xNDAgMjU2di00MG00MCA4MHYtMTIwbTQwIDgwdi02MG00MCAxNDB2LTE4MG00MCAxMjB2LTUwbTQwIDgwdi0xMDBtNDAgNDB2LTIwJyBzdHJva2U9JyMzYjgyZjYnIHN0cm9rZS13aWR0aD0nMzInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjx0ZXh0IHg9JzI1NicgeT0nNDMwJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxMDAnIGZvbnQtd2VpZ2h0PSdib2xkJyBmaWxsPSd3aGl0ZScgdGV4dC1hbmNob3I9J21pZGRsZScgbGV0dGVyLXNwYWNpbmc9JzQnPlQtUEFEPC90ZXh0Pjwvc3ZnPg==" />
   
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -78,7 +78,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-classic-v1';
+        const CACHE_NAME = 't-pad-classic-v3';
         const URLS_TO_CACHE = [ './', './app.html' ];
         self.addEventListener('install', (e) => { 
           self.skipWaiting(); 
@@ -140,6 +140,37 @@
     const Timer = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></Icon>;
     const ArrowDown = (p) => <Icon {...p}><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></Icon>;
     const BookOpen = (p) => <Icon {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></Icon>;
+    const Sliders = (p) => <Icon {...p}><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></Icon>;
+
+    // --- Math Helpers for Fader LOG curve ---
+    // UI Slider range: 0 to 100
+    // 0 -> -60dB (0 Gain)
+    // 80 -> 0dB (1.0 Gain)  <- User requested 0dB to be shifted right
+    // 100 -> +12dB (~3.98 Gain)
+    
+    const sliderToGain = (s) => {
+      if (s <= 0) return 0;
+      if (s <= 80) {
+        // 0-80 maps to -60dB ~ 0dB
+        const db = (s / 80) * 60 - 60;
+        return Math.pow(10, db / 20);
+      } else {
+        // 80-100 maps to 0dB ~ +12dB
+        const db = ((s - 80) / 20) * 12;
+        return Math.pow(10, db / 20);
+      }
+    };
+
+    const gainToSlider = (v) => {
+      if (v <= 0.001) return 0;
+      const db = 20 * Math.log10(v);
+      if (db <= -60) return 0;
+      if (db <= 0) {
+        return (db + 60) / 60 * 80;
+      } else {
+        return Math.min(100, 80 + (db / 12) * 20);
+      }
+    };
 
     // --- Constants ---
     const KEY_MAP = [
@@ -189,11 +220,20 @@
       const [stopMode, setStopMode] = useState('CUT');   
       const [globalFadeDuration, setGlobalFadeDuration] = useState(1.0); 
       const [showManual, setShowManual] = useState(false);
+      const [showPadFaders, setShowPadFaders] = useState(false);
 
       const activeAudioNodes = useRef({});
       const fileInputRefs = useRef([]);
       const projectInputRef = useRef(null);
       const padsRef = useRef(pads); 
+      
+      // Meter & Routing nodes
+      const masterGainRef = useRef(null);
+      const analyzersRef = useRef(null);
+      const meterRefsL = useRef(null);
+      const meterRefsR = useRef(null);
+      const prevLevelsRef = useRef([0, 0]);
+      const meterAnimationRef = useRef(null);
 
       useEffect(() => {
         padsRef.current = pads;
@@ -222,6 +262,73 @@
         }, 1000);
         return () => clearInterval(interval);
       }, [isReady, audioCtx]); 
+
+      // Level Meter Animation
+      useEffect(() => {
+        if (!isReady || !analyzersRef.current) return;
+        const dataArray = new Float32Array(256);
+        const byteArray = new Uint8Array(256); // fallback
+        
+        const updateMeters = () => {
+          try {
+            const analyzer = analyzersRef.current;
+            const getLevel = (node) => {
+              let maxVal = 0;
+              if (node.getFloatTimeDomainData) {
+                node.getFloatTimeDomainData(dataArray);
+                for(let j=0; j<dataArray.length; j++) if(Math.abs(dataArray[j]) > maxVal) maxVal = Math.abs(dataArray[j]);
+              } else {
+                node.getByteTimeDomainData(byteArray);
+                for(let j=0; j<byteArray.length; j++) {
+                  const f = (byteArray[j] - 128) / 128.0;
+                  if(Math.abs(f) > maxVal) maxVal = Math.abs(f);
+                }
+              }
+              return maxVal;
+            };
+
+            let maxL = getLevel(analyzer.L);
+            let maxR = getLevel(analyzer.R);
+
+            const dbL = 20 * Math.log10(Math.max(maxL, 0.0001));
+            const dbR = 20 * Math.log10(Math.max(maxR, 0.0001));
+
+            // Map -60dB ~ +12dB to 0 ~ 100% for the UI (0dB is at ~83.3%)
+            // Let's align it with our UI (which has 0dB at 80% mark)
+            // dB range: -60 to +15 (75dB total)
+            const mapDbToPercent = (db) => {
+               if (db <= -60) return 0;
+               if (db <= 0) return (db + 60) / 60 * 80;
+               return Math.min(100, 80 + (db / 15) * 20); // +15dB = 100%
+            };
+
+            let pctL = mapDbToPercent(dbL);
+            let pctR = mapDbToPercent(dbR);
+
+            let prevL = prevLevelsRef.current[0];
+            let prevR = prevLevelsRef.current[1];
+
+            pctL = pctL >= prevL ? pctL : prevL * 0.92 + pctL * 0.08; // attack fast, release slow
+            pctR = pctR >= prevR ? pctR : prevR * 0.92 + pctR * 0.08;
+
+            prevLevelsRef.current[0] = pctL;
+            prevLevelsRef.current[1] = pctR;
+
+            if (meterRefsL.current) {
+              meterRefsL.current.style.height = `${pctL}%`;
+              meterRefsL.current.style.backgroundColor = pctL > 95 ? '#ef4444' : pctL > 80 ? '#facc15' : '#22c55e';
+            }
+            if (meterRefsR.current) {
+              meterRefsR.current.style.height = `${pctR}%`;
+              meterRefsR.current.style.backgroundColor = pctR > 95 ? '#ef4444' : pctR > 80 ? '#facc15' : '#22c55e';
+            }
+            meterAnimationRef.current = requestAnimationFrame(updateMeters);
+          } catch(e) {}
+        };
+        meterAnimationRef.current = requestAnimationFrame(updateMeters);
+        return () => cancelAnimationFrame(meterAnimationRef.current);
+      }, [isReady]);
+
 
       const triggerPadRef = useRef(null);
 
@@ -460,6 +567,23 @@
           setIsProcessing(true);
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           setAudioCtx(ctx);
+          
+          // Setup Master and Analyzers
+          const masterGain = ctx.createGain();
+          masterGain.connect(ctx.destination);
+          masterGainRef.current = masterGain;
+
+          const splitter = ctx.createChannelSplitter(2);
+          masterGain.connect(splitter);
+          
+          const analyserL = ctx.createAnalyser();
+          const analyserR = ctx.createAnalyser();
+          analyserL.fftSize = 256;
+          analyserR.fftSize = 256;
+          splitter.connect(analyserL, 0);
+          splitter.connect(analyserR, 1);
+          analyzersRef.current = { L: analyserL, R: analyserR };
+
           const newPads = [...pads];
           await Promise.all(newPads.map(async (pad, idx) => {
             if (pad.blob && !pad.buffer) {
@@ -482,7 +606,7 @@
       const triggerPad = useCallback((padId) => {
         if (isEditMode) return;
         const pad = padsRef.current[padId]; 
-        if (!pad || !pad.buffer || !audioCtx) return;
+        if (!pad || !pad.buffer || !audioCtx || !masterGainRef.current) return;
         
         const now = audioCtx.currentTime;
         
@@ -502,7 +626,8 @@
         source.loop = pad.settings.loop;
         const gainNode = audioCtx.createGain();
         source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        // Route to Master Gain instead of destination directly
+        gainNode.connect(masterGainRef.current);
         
         const totalDuration = pad.buffer.duration;
         const startTime = pad.settings.start * totalDuration;
@@ -592,6 +717,15 @@
           return newPads;
         });
       };
+
+      const handlePadVolumeChange = useCallback((padId, newVol) => {
+        updatePadSettings(padId, { volume: newVol });
+        const nodes = activeAudioNodes.current[padId];
+        if (nodes && audioCtx) {
+          nodes.gain.gain.setTargetAtTime(newVol, audioCtx.currentTime, 0.05);
+        }
+      }, [audioCtx]);
+
       const handleEditorClose = (padId) => setEditingPadId(null);
 
       if (!isReady) {
@@ -616,7 +750,29 @@
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Music className="text-blue-400" /><h1 className="text-lg sm:text-xl font-bold tracking-tight">T-PAD</h1></div>
               <div className="flex items-center gap-2">
+                 
+                 {/* Master Level Meter */}
+                 <div className="flex flex-col items-center justify-center mr-2">
+                   <div className="w-8 h-10 bg-slate-900 border border-slate-700/50 rounded flex flex-col p-1 shadow-inner shrink-0 relative">
+                     <div className="flex-1 flex gap-0.5 w-full relative">
+                       {/* 0dB Marker (80% from bottom -> 20% from top) */}
+                       <div className="absolute top-[20%] left-0 right-0 h-px bg-white/40 z-10 pointer-events-none"></div>
+                       <div className="flex-1 bg-slate-800 rounded-sm relative flex flex-col justify-end overflow-hidden">
+                         <div ref={meterRefsL} className="w-full bg-green-500 transition-all duration-75" style={{ height: '0%' }}></div>
+                       </div>
+                       <div className="flex-1 bg-slate-800 rounded-sm relative flex flex-col justify-end overflow-hidden">
+                         <div ref={meterRefsR} className="w-full bg-green-500 transition-all duration-75" style={{ height: '0%' }}></div>
+                       </div>
+                     </div>
+                     <div className="flex justify-between items-center w-full px-[1px] mt-[1px]">
+                       <span className="text-[6px] text-slate-500 font-bold leading-none">L</span>
+                       <span className="text-[6px] text-slate-500 font-bold leading-none">R</span>
+                     </div>
+                   </div>
+                 </div>
+
                  <button onClick={togglePadCount} disabled={isProcessing} className="flex items-center gap-1 px-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold text-slate-300 disabled:opacity-30 mr-2" title="パッド数を切替"><Grid size={14} /> {padCount}</button>
+                 <button onClick={() => setShowPadFaders(!showPadFaders)} className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold transition-colors mr-1 ${showPadFaders ? 'bg-blue-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}`} title="各パッドの音量フェーダーを表示"><Sliders size={14} /> Faders</button>
                  <button onClick={() => { setIsEditMode(!isEditMode); setSwapSourceId(null); }} className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold transition-colors ${isEditMode ? 'bg-amber-600 text-white animate-pulse' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'}`}><Edit3 size={14} /> {isEditMode ? 'EDIT中' : 'EDIT'}</button>
                  <button onClick={() => setShowManual(true)} className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold bg-slate-700 hover:bg-slate-600 text-slate-300" title="マニュアル"><BookOpen size={16} /></button>
                  <div className="flex items-center gap-1 bg-slate-700/50 rounded p-0.5">
@@ -692,6 +848,8 @@
                     audioCtx={audioCtx}
                     isEditMode={isEditMode} 
                     isSwapSelected={swapSourceId === pad.id}
+                    showFader={showPadFaders}
+                    onVolumeChange={(vol) => handlePadVolumeChange(pad.id, vol)}
                     onInteraction={() => {
                       if (isEditMode) { handlePadSwap(pad.id); }
                       else if (!pad.buffer && !pad.blob) { fileInputRefs.current[idx].click(); }
@@ -733,7 +891,8 @@
               pad={pads.find(p => p.id === editingPadId)} 
               onClose={() => handleEditorClose(editingPadId)} 
               onUpdate={(settings) => updatePadSettings(editingPadId, settings)} 
-              audioCtx={audioCtx} 
+              audioCtx={audioCtx}
+              masterGainNode={masterGainRef.current}
             />
           )}
           {showManual && (
@@ -757,127 +916,8 @@
         </div>
       );
     }
-    
-    // --- Manual Modal ---
-    const ManualModal = ({ onClose }) => {
-      return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="bg-white text-slate-800 rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-            <div className="bg-slate-900 text-white p-4 flex justify-between items-center flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <BookOpen className="text-blue-400" />
-                <h2 className="text-lg font-bold">操作マニュアル</h2>
-              </div>
-              <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full"><X size={20} /></button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-12">
-                <section>
-                  <h2 className="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-6 flex items-center gap-2">
-                    <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                    画面の見方と基本操作
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-slate-800 p-4 rounded-xl shadow-lg text-white relative">
-                      <div className="border-b border-slate-700 pb-2 mb-2 flex justify-between items-center">
-                        <span className="font-bold">T-PAD</span>
-                        <div className="flex gap-2">
-                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">Grid 10</span>
-                          <span className="bg-slate-700 px-2 py-1 rounded text-xs">EDIT</span>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 mb-4">
-                        <div className="aspect-square bg-blue-600 border-b-4 border-blue-800 rounded-xl flex items-center justify-center relative"><span className="text-xs">Pad 1</span></div>
-                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
-                        <div className="aspect-square bg-slate-700 border-b-4 border-slate-600 rounded-xl flex items-center justify-center relative"><span className="text-xs opacity-50">空</span></div>
-                      </div>
-                      <div className="absolute top-12 left-10 w-8 h-8 border-2 border-yellow-400 rounded-full animate-ping"></div>
-                      <div className="absolute top-14 left-20 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded shadow">
-                        タップして再生
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="font-bold text-lg mb-2">音声の読み込み</h3>
-                        <p className="text-sm leading-relaxed">
-                          「空」または「音声読込」と書かれたパッドをタップ（クリック）すると、ファイル選択画面が開きます。<br/>
-                        </p>
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-lg mb-2">再生と停止</h3>
-                        <p className="text-sm leading-relaxed">
-                          読み込み済みのパッドをタップすると再生します。<br/>
-                          もう一度タップすると停止します（設定により挙動が変わります）。
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
 
-                <section>
-                  <h2 className="text-xl font-bold border-b-2 border-green-500 pb-2 mb-6 flex items-center gap-2">
-                    <span className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                    再生モードの設定（画面上部）
-                  </h2>
-                  <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div className="grid gap-6 md:grid-cols-3 text-center">
-                      <div className="space-y-2">
-                        <div className="inline-flex bg-slate-800 rounded p-1">
-                          <span className="px-2 py-1 bg-indigo-600 text-white text-xs rounded">SWITCH</span>
-                          <span className="px-2 py-1 text-slate-400 text-xs">MIX</span>
-                        </div>
-                        <h4 className="font-bold text-sm">Mode (全体動作)</h4>
-                        <ul className="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
-                          <li><b>SWITCH</b>: 音を切り替えます。別のパッドを押すと前の音は止まります。</li>
-                          <li><b>MIX</b>: 音を重ねます。BGMの上に効果音を鳴らす時などに使います。</li>
-                        </ul>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="inline-flex bg-slate-800 rounded p-1">
-                          <span className="px-2 py-1 bg-green-600 text-white text-xs rounded">CUT</span>
-                          <span className="px-2 py-1 text-slate-400 text-xs">FADE</span>
-                        </div>
-                        <h4 className="font-bold text-sm">Start (開始時)</h4>
-                        <ul className="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
-                          <li><b>CUT</b>: 押した瞬間に本来の音量で再生します。</li>
-                          <li><b>FADE</b>: ふわっと音が入ります。</li>
-                        </ul>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="inline-flex bg-slate-800 rounded p-1">
-                          <span className="px-2 py-1 text-slate-400 text-xs">CUT</span>
-                          <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded">FADE</span>
-                        </div>
-                        <h4 className="font-bold text-sm">Stop (停止時)</h4>
-                        <ul className="text-xs text-left list-disc list-inside text-slate-600 space-y-1">
-                          <li><b>CUT</b>: 即座に音が止まります。</li>
-                          <li><b>FADE</b>: 余韻を残してフェードアウトします。</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                <section>
-                  <h2 className="text-xl font-bold border-b-2 border-amber-500 pb-2 mb-6 flex items-center gap-2">
-                    <span className="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
-                    波形編集と詳細設定
-                  </h2>
-                  <div className="space-y-6">
-                    <p className="text-sm">
-                      パッドの右上にある <span className="inline-block bg-black text-white p-1 rounded-full"><Settings size={12} /></span> ボタンを押すと編集画面が開きます。
-                    </p>
-                  </div>
-                </section>
-            </div>
-            <div className="p-4 bg-slate-100 text-center flex-shrink-0 border-t border-slate-200">
-              <button onClick={onClose} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold text-sm transition-colors">閉じる</button>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    const PadBase = ({ pad, playingInfo, audioCtx, isEditMode, isSwapSelected, onInteraction }) => {
+    const PadBase = ({ pad, playingInfo, audioCtx, isEditMode, isSwapSelected, onInteraction, showFader, onVolumeChange }) => {
       const hasAudio = !!pad.buffer || !!pad.blob;
       const progressRef = useRef(null);
       const padRef = useRef(null);
@@ -947,7 +987,7 @@
              {pad.settings.enableTrigger && hasAudio && !isEditMode && <Timer size={14} className="text-yellow-400" />}
           </div>
 
-          <div className="flex flex-col items-center justify-center h-full p-2 sm:p-4 pointer-events-none select-none relative z-10">
+          <div className={`flex flex-col items-center justify-center h-full p-2 sm:p-4 pointer-events-none select-none relative z-10 ${showFader && hasAudio && !isEditMode ? 'pb-8' : ''}`}>
             <span className="absolute top-1 left-2 font-mono text-xl sm:text-2xl font-bold opacity-50 text-black/40">{isEditMode ? '' : pad.keyTrigger}</span>
             {!hasAudio ? (
               <div className="flex flex-col items-center text-slate-400"><Upload size={32} className={`mb-2 opacity-50 ${isEditMode ? 'hidden' : ''}`} /><span className="text-sm font-medium">{isEditMode ? '空' : '音声読込'}</span></div>
@@ -964,11 +1004,38 @@
               </div>
             )}
           </div>
+
+          {/* Individual Pad Fader with LOG Curve and 0dB Marker */}
+          {showFader && hasAudio && !isEditMode && (
+            <div 
+              className="absolute bottom-0 left-0 right-0 h-8 bg-slate-900/90 border-t border-black/30 flex items-center px-2 z-50 pointer-events-auto gap-2"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative flex-1 h-full flex items-center">
+                {/* 0dB Marker Tick */}
+                <div className="absolute left-[80%] top-2 bottom-2 w-px bg-white/40 pointer-events-none z-0"></div>
+                <input 
+                  type="range" min="0" max="100" step="0.1" 
+                  value={gainToSlider(pad.settings.volume)} 
+                  onChange={(e) => onVolumeChange(sliderToGain(parseFloat(e.target.value)))} 
+                  className="w-full h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-white relative z-10" 
+                />
+              </div>
+              <button 
+                onClick={() => onVolumeChange(1.0)}
+                className="text-[9px] font-bold bg-slate-700 hover:bg-slate-600 text-white px-1.5 py-1 rounded shadow-sm border border-slate-500 transition-colors shrink-0"
+                title="0dBにリセット"
+              >
+                0dB
+              </button>
+            </div>
+          )}
         </div>
       );
     };
 
-    const EditorModal = ({ pad, onClose, onUpdate, audioCtx }) => {
+    const EditorModal = ({ pad, onClose, onUpdate, audioCtx, masterGainNode }) => {
       const canvasRef = useRef(null);
       const [zoomX, setZoomX] = useState(1);
       const [zoomY, setZoomY] = useState(1);
@@ -1047,7 +1114,9 @@
           source.buffer = pad.buffer;
           const gainNode = audioCtx.createGain();
           source.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
+          
+          if (masterGainNode) gainNode.connect(masterGainNode);
+          else gainNode.connect(audioCtx.destination);
           
           const now = audioCtx.currentTime;
           
@@ -1387,12 +1456,24 @@
                   <div className="space-y-1 pt-2 border-t border-slate-600/50">
                      <div className="flex justify-between text-xs items-center">
                        <div className="flex items-center gap-2"><Volume2 size={14} /> 音量</div>
-                       <div className="flex items-center gap-1">
-                         <input type="number" step="0.1" min="-100" max="12" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-16 text-white focus:outline-none focus:border-yellow-500 font-mono" value={pad.settings.volume <= 0.0001 ? -100 : (20 * Math.log10(pad.settings.volume)).toFixed(1)} onChange={(e) => { let db = parseFloat(e.target.value); if (isNaN(db)) db = -100; if (db > 12) db = 12; onUpdate({ volume: db <= -100 ? 0 : Math.pow(10, db / 20) }); }} />
-                         <span className="text-xs text-slate-400">dB</span>
+                       <div className="flex items-center gap-2">
+                         <button onClick={() => onUpdate({ volume: 1.0 })} className="text-[10px] bg-slate-700 px-2 py-0.5 rounded border border-slate-500 hover:bg-slate-600 text-white transition-colors">0dB</button>
+                         <div className="flex items-center gap-1">
+                           <input type="number" step="0.1" min="-100" max="12" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-16 text-white focus:outline-none focus:border-yellow-500 font-mono" value={pad.settings.volume <= 0.0001 ? -100 : (20 * Math.log10(pad.settings.volume)).toFixed(1)} onChange={(e) => { let db = parseFloat(e.target.value); if (isNaN(db)) db = -100; if (db > 12) db = 12; onUpdate({ volume: db <= -100 ? 0 : Math.pow(10, db / 20) }); }} />
+                           <span className="text-xs text-slate-400">dB</span>
+                         </div>
                        </div>
                      </div>
-                    <input type="range" min="0" max="4.0" step="0.1" value={pad.settings.volume} onChange={(e) => onUpdate({ volume: parseFloat(e.target.value) })} className="w-full accent-yellow-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    <div className="relative w-full flex items-center h-4">
+                      {/* 0dB Marker Tick */}
+                      <div className="absolute left-[80%] top-0 bottom-0 w-px bg-white/40 pointer-events-none z-0"></div>
+                      <input 
+                        type="range" min="0" max="100" step="0.1" 
+                        value={gainToSlider(pad.settings.volume)} 
+                        onChange={(e) => onUpdate({ volume: sliderToGain(parseFloat(e.target.value)) })} 
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none z-10 accent-yellow-400 relative" 
+                      />
+                    </div>
                   </div>
                   <div className="pt-4 border-t border-slate-600/50 text-right">
                     <button onClick={() => { if(confirm("設定を初期状態に戻しますか？")) { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false }); } }} className="text-xs text-slate-400 hover:text-white underline">設定を初期化</button>
