@@ -20,8 +20,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Force a specific stable Babel version -->
+  
+  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone@7.23.6/babel.min.js"></script>
+  <script>
+    // ブラウザ用の安全なBabel設定
+    Babel.registerPreset('react-classic', {
+      presets: [[Babel.availablePresets['react'], { runtime: 'classic' }]]
+    });
+  </script>
+
   <script src="https://unpkg.com/idb-keyval@6.2.0/dist/umd.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
@@ -75,10 +83,11 @@
     }
   </style>
 
+  <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 't-pad-classic-v3';
+        const CACHE_NAME = 't-pad-classic-v5-master-meter';
         const URLS_TO_CACHE = [ './', './app.html' ];
         self.addEventListener('install', (e) => { 
           self.skipWaiting(); 
@@ -105,11 +114,7 @@
 <body class="bg-slate-900 text-white h-screen overflow-hidden">
   <div id="root" class="h-full"></div>
 
-  <!-- FIX: JSX pragma to force React.createElement instead of import -->
-  <script type="text/babel" data-presets="react">
-    /** @jsx React.createElement */
-    /** @jsxFrag React.Fragment */
-
+  <script type="text/babel" data-presets="react-classic">
     const { useState, useEffect, useRef, useCallback } = React;
 
     // --- Icons ---
@@ -267,7 +272,7 @@
       useEffect(() => {
         if (!isReady || !analyzersRef.current) return;
         const dataArray = new Float32Array(256);
-        const byteArray = new Uint8Array(256); 
+        const byteArray = new Uint8Array(256); // fallback
         
         const updateMeters = () => {
           try {
@@ -311,7 +316,6 @@
             prevLevelsRef.current[0] = pctL;
             prevLevelsRef.current[1] = pctR;
 
-            // --- Updated for Horizontal Layout ---
             if (meterRefsL.current) {
               meterRefsL.current.style.width = `${pctL}%`;
               meterRefsL.current.style.backgroundColor = pctL > 95 ? '#ef4444' : pctL > 80 ? '#facc15' : '#22c55e';
@@ -326,7 +330,6 @@
         meterAnimationRef.current = requestAnimationFrame(updateMeters);
         return () => cancelAnimationFrame(meterAnimationRef.current);
       }, [isReady]);
-
 
       const triggerPadRef = useRef(null);
 
@@ -566,7 +569,6 @@
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           setAudioCtx(ctx);
           
-          // Setup Master and Analyzers
           const masterGain = ctx.createGain();
           masterGain.connect(ctx.destination);
           masterGainRef.current = masterGain;
@@ -624,7 +626,6 @@
         source.loop = pad.settings.loop;
         const gainNode = audioCtx.createGain();
         source.connect(gainNode);
-        // Route to Master Gain instead of destination directly
         gainNode.connect(masterGainRef.current);
         
         const totalDuration = pad.buffer.duration;
@@ -707,9 +708,10 @@
         return () => window.removeEventListener('keydown', handleKeyDown);
       }, [isReady, triggerPad, isEditMode, padCount]);
 
-      const updatePadSettings = (id, newSettings) => {
+      // --- Generic Update Pad Function ---
+      const updatePad = (id, updates) => {
         setPads(prev => {
-          const newPads = prev.map(p => p.id === id ? { ...p, settings: { ...p.settings, ...newSettings } } : p);
+          const newPads = prev.map(p => p.id === id ? { ...p, ...updates } : p);
           const updatedPad = newPads.find(p => p.id === id);
           if(updatedPad) savePadToDb(updatedPad, id);
           return newPads;
@@ -717,12 +719,12 @@
       };
 
       const handlePadVolumeChange = useCallback((padId, newVol) => {
-        updatePadSettings(padId, { volume: newVol });
+        updatePad(padId, { settings: { ...pads.find(p => p.id === padId).settings, volume: newVol } });
         const nodes = activeAudioNodes.current[padId];
         if (nodes && audioCtx) {
           nodes.gain.gain.setTargetAtTime(newVol, audioCtx.currentTime, 0.05);
         }
-      }, [audioCtx]);
+      }, [audioCtx, pads]);
 
       const handleEditorClose = (padId) => setEditingPadId(null);
 
@@ -895,7 +897,8 @@
             <EditorModal 
               pad={pads.find(p => p.id === editingPadId)} 
               onClose={() => handleEditorClose(editingPadId)} 
-              onUpdate={(settings) => updatePadSettings(editingPadId, settings)} 
+              onUpdateSettings={(settings) => updatePad(editingPadId, { settings: { ...pads.find(p => p.id === editingPadId).settings, ...settings } })} 
+              onUpdateName={(name) => updatePad(editingPadId, { name })}
               audioCtx={audioCtx}
               masterGainNode={masterGainRef.current}
             />
@@ -1040,7 +1043,7 @@
       );
     };
 
-    const EditorModal = ({ pad, onClose, onUpdate, audioCtx, masterGainNode }) => {
+    const EditorModal = ({ pad, onClose, onUpdateSettings, onUpdateName, audioCtx, masterGainNode }) => {
       const canvasRef = useRef(null);
       const [zoomX, setZoomX] = useState(1);
       const [zoomY, setZoomY] = useState(1);
@@ -1066,9 +1069,9 @@
          if (ratio > 1) ratio = 1;
          
          if (type === 'start') {
-            if (ratio < pad.settings.end) onUpdate({ start: ratio });
+            if (ratio < pad.settings.end) onUpdateSettings({ start: ratio });
          } else {
-            if (ratio > pad.settings.start) onUpdate({ end: ratio });
+            if (ratio > pad.settings.start) onUpdateSettings({ end: ratio });
          }
       };
 
@@ -1226,8 +1229,8 @@
         const totalSamples = pad.buffer.length;
         if (draggingHandle) {
           const newVal = getNormalizedFromScreenX(x, width, totalSamples);
-          if (draggingHandle === 'start') { if (newVal < pad.settings.end) onUpdate({ start: newVal }); }
-          else if (draggingHandle === 'end') { if (newVal > pad.settings.start) onUpdate({ end: newVal }); }
+          if (draggingHandle === 'start') { if (newVal < pad.settings.end) onUpdateSettings({ start: newVal }); }
+          else if (draggingHandle === 'end') { if (newVal > pad.settings.start) onUpdateSettings({ end: newVal }); }
           else if (draggingHandle === 'seek') { setSeekPos(newVal); }
           return;
         }
@@ -1354,7 +1357,18 @@
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
           <div className="bg-slate-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl border border-slate-700 flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-900/50 flex-shrink-0">
-              <h2 className="text-lg font-bold flex items-center gap-2"><Scissors size={18} /> 波形編集: {pad.name}</h2>
+              <div className="flex items-center gap-2 flex-1">
+                <Scissors size={18} />
+                <h2 className="text-lg font-bold flex items-center gap-2 whitespace-nowrap">波形編集:</h2>
+                {/* RENAME INPUT */}
+                <input 
+                  type="text" 
+                  value={pad.name} 
+                  onChange={(e) => onUpdateName(e.target.value)} 
+                  className="bg-slate-950 text-white font-bold px-2 py-1 rounded border border-slate-600 focus:outline-none focus:border-blue-500 w-48 text-sm placeholder-slate-500"
+                  placeholder="パッド名を入力..."
+                />
+              </div>
               <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-full"><X size={20} /></button>
             </div>
             <div className="p-6 space-y-6 overflow-y-auto flex-1">
@@ -1391,7 +1405,7 @@
                           <button 
                             onClick={() => {
                                const currentRatio = getCurrentRatio();
-                               if (currentRatio < pad.settings.end) onUpdate({ start: currentRatio });
+                               if (currentRatio < pad.settings.end) onUpdateSettings({ start: currentRatio });
                             }}
                             className="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-200 border border-slate-500 flex items-center gap-1"
                             title="現在位置を設定"
@@ -1401,7 +1415,7 @@
                           <input type="number" step="0.001" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-20 text-white focus:outline-none focus:border-green-500" value={(pad.settings.start * totalDuration).toFixed(3)} onChange={(e) => handleTimeChange('start', e.target.value)} />
                        </div>
                     </div>
-                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.start} onChange={(e) => { const val = parseFloat(e.target.value); if (val < pad.settings.end) onUpdate({ start: val }); }} className="w-full accent-green-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.start} onChange={(e) => { const val = parseFloat(e.target.value); if (val < pad.settings.end) onUpdateSettings({ start: val }); }} className="w-full accent-green-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs items-center">
@@ -1410,7 +1424,7 @@
                           <button 
                             onClick={() => {
                                const currentRatio = getCurrentRatio();
-                               if (currentRatio > pad.settings.start) onUpdate({ end: currentRatio });
+                               if (currentRatio > pad.settings.start) onUpdateSettings({ end: currentRatio });
                             }}
                             className="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-200 border border-slate-500 flex items-center gap-1"
                             title="現在位置を設定"
@@ -1420,56 +1434,56 @@
                           <input type="number" step="0.001" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-20 text-white focus:outline-none focus:border-red-500" value={(pad.settings.end * totalDuration).toFixed(3)} onChange={(e) => handleTimeChange('end', e.target.value)} />
                        </div>
                     </div>
-                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.end} onChange={(e) => { const val = parseFloat(e.target.value); if (val > pad.settings.start) onUpdate({ end: val }); }} className="w-full accent-red-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    <input type="range" min="0" max="1" step="0.001" value={pad.settings.end} onChange={(e) => { const val = parseFloat(e.target.value); if (val > pad.settings.start) onUpdateSettings({ end: val }); }} className="w-full accent-red-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
                   </div>
                 </div>
                 <div className="space-y-4 p-4 bg-slate-700/30 rounded-lg">
                   <h3 className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">エフェクト</h3>
                   <div className="flex items-center justify-between bg-slate-900/50 p-2 rounded mb-2">
                     <span className="text-xs font-bold text-slate-300 flex items-center gap-1"><Repeat size={14} /> リピート再生</span>
-                    <button onClick={() => onUpdate({ loop: !pad.settings.loop })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.loop ? 'bg-blue-600' : 'bg-slate-600'}`}>
+                    <button onClick={() => onUpdateSettings({ loop: !pad.settings.loop })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.loop ? 'bg-blue-600' : 'bg-slate-600'}`}>
                       <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${pad.settings.loop ? 'translate-x-5' : 'translate-x-1'}`} />
                     </button>
                   </div>
                   <div className="bg-slate-900/50 p-2 rounded mb-2 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-300 flex items-center gap-1"><Timer size={14} className="text-yellow-400" /> タイマー再生</span>
-                      <button onClick={() => onUpdate({ enableTrigger: !pad.settings.enableTrigger })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.enableTrigger ? 'bg-yellow-600' : 'bg-slate-600'}`}>
+                      <button onClick={() => onUpdateSettings({ enableTrigger: !pad.settings.enableTrigger })} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors touch-manipulation ${pad.settings.enableTrigger ? 'bg-yellow-600' : 'bg-slate-600'}`}>
                         <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${pad.settings.enableTrigger ? 'translate-x-5' : 'translate-x-1'}`} />
                       </button>
                     </div>
                     {pad.settings.enableTrigger && (
-                      <div className="flex items-center justify-between text-sm"><span className="text-slate-400 text-xs">開始時刻(JST/端末)</span><input type="time" step="1" value={pad.settings.triggerTime || ''} onChange={(e) => onUpdate({ triggerTime: e.target.value })} className="bg-slate-800 text-white border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500" /></div>
+                      <div className="flex items-center justify-between text-sm"><span className="text-slate-400 text-xs">開始時刻(JST/端末)</span><input type="time" step="1" value={pad.settings.triggerTime || ''} onChange={(e) => onUpdateSettings({ triggerTime: e.target.value })} className="bg-slate-800 text-white border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500" /></div>
                     )}
                   </div>
                   <div className="flex gap-4">
                     <div className="flex-1 space-y-1">
                       <div className="flex justify-between text-xs items-center">
                         <span>フェードイン</span>
-                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeIn} onChange={(e) => onUpdate({ fadeIn: Math.max(0, parseFloat(e.target.value) || 0) })} />
+                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeIn} onChange={(e) => onUpdateSettings({ fadeIn: Math.max(0, parseFloat(e.target.value) || 0) })} />
                       </div>
-                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeIn} onChange={(e) => onUpdate({ fadeIn: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeIn} onChange={(e) => onUpdateSettings({ fadeIn: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
                     </div>
                     <div className="flex-1 space-y-1">
                       <div className="flex justify-between text-xs items-center">
                         <span>フェードアウト</span>
-                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeOut} onChange={(e) => onUpdate({ fadeOut: Math.max(0, parseFloat(e.target.value) || 0) })} />
+                        <input type="number" step="0.1" min="0" max="10" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-12 text-white focus:outline-none focus:border-blue-500" value={pad.settings.fadeOut} onChange={(e) => onUpdateSettings({ fadeOut: Math.max(0, parseFloat(e.target.value) || 0) })} />
                       </div>
-                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeOut} onChange={(e) => onUpdate({ fadeOut: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                      <input type="range" min="0" max="2" step="0.1" value={pad.settings.fadeOut} onChange={(e) => onUpdateSettings({ fadeOut: parseFloat(e.target.value) })} className="w-full accent-blue-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
                     </div>
                   </div>
                   <div className="space-y-1 pt-2 border-t border-slate-600/50">
                      <div className="flex justify-between text-xs items-center">
                        <div className="flex items-center gap-2"><Volume2 size={14} /> 音量</div>
                        <div className="flex items-center gap-1">
-                         <input type="number" step="0.1" min="-100" max="12" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-16 text-white focus:outline-none focus:border-yellow-500 font-mono" value={pad.settings.volume <= 0.0001 ? -100 : (20 * Math.log10(pad.settings.volume)).toFixed(1)} onChange={(e) => { let db = parseFloat(e.target.value); if (isNaN(db)) db = -100; if (db > 12) db = 12; onUpdate({ volume: db <= -100 ? 0 : Math.pow(10, db / 20) }); }} />
+                         <input type="number" step="0.1" min="-100" max="12" className="bg-slate-800 border border-slate-600 rounded px-1 text-right text-xs w-16 text-white focus:outline-none focus:border-yellow-500 font-mono" value={pad.settings.volume <= 0.0001 ? -100 : (20 * Math.log10(pad.settings.volume)).toFixed(1)} onChange={(e) => { let db = parseFloat(e.target.value); if (isNaN(db)) db = -100; if (db > 12) db = 12; onUpdateSettings({ volume: db <= -100 ? 0 : Math.pow(10, db / 20) }); }} />
                          <span className="text-xs text-slate-400">dB</span>
                        </div>
                      </div>
-                    <input type="range" min="0" max="4.0" step="0.1" value={pad.settings.volume} onChange={(e) => onUpdate({ volume: parseFloat(e.target.value) })} className="w-full accent-yellow-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
+                    <input type="range" min="0" max="4.0" step="0.1" value={pad.settings.volume} onChange={(e) => onUpdateSettings({ volume: parseFloat(e.target.value) })} className="w-full accent-yellow-400 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer touch-none p-2" />
                   </div>
                   <div className="pt-4 border-t border-slate-600/50 text-right">
-                    <button onClick={() => { if(confirm("設定を初期状態に戻しますか？")) { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false }); } }} className="text-xs text-slate-400 hover:text-white underline">設定を初期化</button>
+                    <button onClick={() => { if(confirm("設定を初期状態に戻しますか？")) { onUpdateSettings({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false }); } }} className="text-xs text-slate-400 hover:text-white underline">設定を初期化</button>
                   </div>
                 </div>
               </div>
@@ -1486,7 +1500,7 @@
                    <p className="text-slate-300 text-sm mb-6 leading-relaxed">開始・終了位置を含むすべての設定を初期状態に戻しますか？<br/>(音声ファイルは残ります)</p>
                    <div className="flex gap-3 justify-center">
                      <button onClick={() => setShowResetConfirm(false)} className="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors">キャンセル</button>
-                     <button onClick={() => { onUpdate({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false, enableTrigger: false, triggerTime: '' }); setShowResetConfirm(false); }} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 text-white text-sm font-bold shadow-lg transition-colors">初期化する</button>
+                     <button onClick={() => { onUpdateSettings({ start: 0, end: 1, fadeIn: 0, fadeOut: 0, volume: 1, loop: false, enableTrigger: false, triggerTime: '' }); setShowResetConfirm(false); }} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 text-white text-sm font-bold shadow-lg transition-colors">初期化する</button>
                    </div>
                 </div>
               </div>
